@@ -1,0 +1,135 @@
+{% extends "layout.html" %}
+{% block body %}
+    <h1>Hello Adventurer!</h1>
+    <div class="row">
+        <div class="col-md-1">
+            <input class="form-control" type="text" placeholder="{{ name }}" readonly>
+        <div>Name</div>
+        </div>
+
+        <div class="col-md-1">
+            <input class="form-control" type="text" placeholder="{{ level }}" readonly>
+        <div>Level</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <h1>Initiative</h1>
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" placeholder="{{ initiative }}" readonly>
+                    </div>
+                    <div class="col-md-3">Initiative</div>
+                </div>
+                <div class="row">
+                    <h1>Ability Scores</h1>
+                    <div>
+                        {% for (name, score, mod, modPlus) in (
+                            ("Str", abilityScoreStr, abilityModStr, abilityModPlusStr),
+                            ("Con", abilityScoreCon, abilityModCon, abilityModPlusCon),
+                            ("Dex", abilityScoreDex, abilityModDex, abilityModPlusDex),
+                            ("Int", abilityScoreInt, abilityModInt, abilityModPlusInt),
+                            ("Wis", abilityScoreWis, abilityModWis, abilityModPlusWis),
+                            ("Cha", abilityScoreCha, abilityModCha, abilityModPlusCha),
+                            )
+                        %}
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input class="form-control" type="text" placeholder="{{ score }}" readonly>
+                                </div>
+                                <div class="col-md-3">{{ name }}</div>
+                                <div class="col-md-3">
+
+                                    <input class="form-control" type="text" placeholder="{{ mod }}" readonly>
+                                </div>
+                                <div class="col-md-3">
+
+                                    <input class="form-control" type="text" placeholder="{{ modPlus }}" readonly>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div>
+                    <h1>Hit Points</h1>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input class="form-control" type="text" placeholder="{{ health }}" readonly>
+                        </div>
+                        <div class="col-md-3">Health</div>
+                    </div>
+                </div>
+
+                <div class="rows">
+                    <h1>Skills</h1>
+                    <div>
+                        {% for (name, skill) in (
+                            ("Acrobatics", acrobatics),
+                            ("Arcana", arcana),
+                            ("Athletics", athletics),
+                            ("Bluff", bluff),
+                            ("Diplomacy", diplomacy),
+                            ("Dungeoneering", dungeoneering),
+                            ("Endurance", endurance),
+                            ("Heal", heal),
+                            ("History", history),
+                            ("Insight", insight),
+                            ("Intimidate", intimidate),
+                            ("Nature", nature),
+                            ("Perception", perception),
+                            ("Religion", religion),
+                            ("Stealth", stealth),
+                            ("Streetwise", streetwise),
+                            ("Thievery", thievery),
+                            )
+                        %}
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input class="form-control" type="text" placeholder="{{ skill }}" readonly>
+                                </div>
+                                <div class="col-md-3">{{ name }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="rows">
+                    <h1>Defenses</h1>
+                    <div>
+                        {% for (name, def) in (
+                            ("AC", ac),
+                            ("Fort", fort),
+                            ("Ref", ref),
+                            ("Will", will),
+                            )
+                        %}
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input class="form-control" type="text" placeholder="{{ def }}" readonly>
+                                </div>
+                                <div class="col-md-3">{{ name }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="rows">
+                    <h1>Speed</h1>
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" placeholder="{{ speed }}" readonly>
+                    </div>
+                    <div class="col-md-3">Speed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
