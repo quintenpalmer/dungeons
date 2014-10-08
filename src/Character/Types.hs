@@ -76,7 +76,7 @@ data Ability = Str |
                Wis |
                Cha deriving (Ord, Eq, Show)
 
-data Defense = AC |
+data Defense = Ac |
                Fort |
                Ref |
                Will deriving (Ord, Eq, Show)

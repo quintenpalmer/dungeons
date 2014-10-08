@@ -64,7 +64,7 @@ getDefenseModifiers defense = case defense of
     Fort -> [Str, Con]
     Ref -> [Dex, Int]
     Will -> [Wis, Cha]
-    AC -> [Dex, Int]
+    Ac -> [Dex, Int]
 
 getInitiative :: Player -> Int
 getInitiative player =

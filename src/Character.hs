@@ -35,7 +35,7 @@ showPlayer player = "Player:" ++
     showAbil Wis player ++
     showAbil Cha player ++
     "\nDefenses:" ++
-    showDef AC player ++
+    showDef Ac player ++
     showDef Fort player ++
     showDef Ref player ++
     showDef Will player ++
