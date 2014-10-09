@@ -3,6 +3,8 @@ module Character (
     newPlayer,
     showPlayer,
     getAttribute,
+    serializePlayerForNetwork,
+    serializePlayerForTerminal,
     readMaybe
 ) where
 
@@ -23,6 +25,9 @@ import Character.Types (
     Ability(..),
     Skill(..),
     Defense(..))
+import Character.Serialize (
+    serializePlayerForNetwork,
+    serializePlayerForTerminal)
 
 getAttribute :: String -> String -> Player -> Maybe String
 getAttribute request param player = case request of

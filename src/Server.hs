@@ -13,7 +13,9 @@ import System.IO (hPutStrLn,
                   hFlush,
                   hClose)
 
-import Character (getAttribute, Player)
+import Character (getAttribute,
+                  Player,
+                  serializePlayerForNetwork)
 
 import Data.Maybe (fromJust)
 import Character.Loader (loadPlayer)
@@ -51,6 +53,7 @@ getResponse msg player = case splitOn ":" msg of
     _ -> "{\"error\": \"request: " ++ msg ++ " must have one or no parameters\"}"
 
 sendServerRequest :: String -> String -> Player -> String
+sendServerRequest "player" params player = serializePlayerForNetwork player
 sendServerRequest request params player = case getAttribute request params player of
     Just response -> "{\"" ++ request ++ "\": \"" ++ response ++ "\"}"
     Nothing -> "{\"error\": \"attribute " ++ request ++ ":" ++ params ++ " not found\"}"
