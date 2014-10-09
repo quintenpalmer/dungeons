@@ -65,18 +65,18 @@ instance ToJSON NetworkPlayer where
 
 buildNetworkPlayer :: Player -> NetworkPlayer
 buildNetworkPlayer player =
-    let nName = getName player
-        nLevel = getLevel player
-        nXp = getXp player
-        nInitiative = getInitiative player
-        nHitPoints = getHealth player
-        nSpeed = getSpeed player
-        nAbilScores = getAbilityScores player
-        nAbilMods = getAbilityMods player
-        nAbilModsPlus = getAbilityModsPlus player
-        nSkills = getSkills player
-        nDefenses = getDefenses player in
-    NetworkPlayer nName nLevel nXp nInitiative nHitPoints nSpeed nAbilScores nAbilMods nAbilModsPlus nSkills nDefenses
+    NetworkPlayer
+        (getName player)
+        (getLevel player)
+        (getXp player)
+        (getInitiative player)
+        (getHealth player)
+        (getSpeed player)
+        (getAbilityScores player)
+        (getAbilityMods player)
+        (getAbilityModsPlus player)
+        (getSkills player)
+        (getDefenses player)
 
 
 getAbilityScores :: Player -> (Map String Int)
