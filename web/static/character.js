@@ -9,6 +9,7 @@ var getCharacter = function(name) {
 var populateFields = function(data) {
     document.getElementById('name').value = data.name;
     document.getElementById('level').value = data.level;
+    document.getElementById('xp').value = data.xp;
     document.getElementById('initiative').value = data.initiative;
     for (var abilName in data.abilityScores) {
         document.getElementById('abilScore' + abilName).value = data.abilityScores[abilName];
@@ -26,5 +27,6 @@ var populateFields = function(data) {
         document.getElementById(defName).value = data.defenses[defName];
     }
     document.getElementById('speed').value = data.speed;
-    document.getElementById('xp').value = data.xp;
+    document.getElementById('passiveInsight').value = data.passiveInsight;
+    document.getElementById('passivePerception').value = data.passivePerception;
 }

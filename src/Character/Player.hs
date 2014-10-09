@@ -6,6 +6,8 @@ module Character.Player (
     getAbilModPlus,
     getDefense,
     getSpeed,
+    getPassiveInsight,
+    getPassivePerception,
     getSkill,
     getHealth,
     getBloodied,
@@ -108,6 +110,12 @@ getSurgeValue player = getBloodied player `div` 2
 
 getSurgesPerDay :: Player -> Int
 getSurgesPerDay player = (getAbilMod Con player) + 7
+
+getPassiveInsight :: Player -> Int
+getPassiveInsight player = (getSkill Insight player) + 10
+
+getPassivePerception :: Player -> Int
+getPassivePerception player = (getSkill Perception player) + 10
 
 getHalfPlayerLevel :: Player -> Int
 getHalfPlayerLevel player = (getHalfLevel $ getLevel player)

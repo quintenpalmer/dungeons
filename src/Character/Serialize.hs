@@ -21,6 +21,8 @@ import Character.Player (
     getSkill,
     getDefense,
     getInitiative,
+    getPassiveInsight,
+    getPassivePerception,
     getSpeed,
     getHealth,
     getBloodied,
@@ -49,6 +51,8 @@ data NetworkPlayer = NetworkPlayer { name :: String
                                    , surgeValue :: Int
                                    , surgesPerDay :: Int
                                    , speed :: Int
+                                   , passiveInsight :: Int
+                                   , passivePerception :: Int
                                    , abilityScores :: (Map String Int)
                                    , abilityMods :: (Map String Int)
                                    , abilityModsPlus :: (Map String Int)
@@ -66,6 +70,8 @@ instance ToJSON NetworkPlayer where
         "surgeValue" .= surgeValue np,
         "surgesPerDay" .= surgesPerDay np,
         "speed" .= speed np,
+        "passiveInsight" .= passiveInsight np,
+        "passivePerception" .= passivePerception np,
         "abilityScores" .= abilityScores np,
         "abilityMods" .= abilityMods np,
         "abilityModsPlus" .= abilityModsPlus np,
@@ -84,6 +90,8 @@ buildNetworkPlayer player =
         (getSurgeValue player)
         (getSurgesPerDay player)
         (getSpeed player)
+        (getPassiveInsight player)
+        (getPassivePerception player)
         (getAbilityScores player)
         (getAbilityMods player)
         (getAbilityModsPlus player)
