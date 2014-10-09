@@ -14,6 +14,8 @@ import Character.Types (
     Defense(..))
 import Character.Util (allValues)
 import Character.Player (
+    getRaceName,
+    getClassName,
     getAttribute,
     getAbilScore,
     getAbilMod,
@@ -43,6 +45,8 @@ serializePlayerForTerminal :: Player -> String
 serializePlayerForTerminal player = unpack $ encodePretty $ buildNetworkPlayer player
 
 data NetworkPlayer = NetworkPlayer { name :: String
+                                   , race :: String
+                                   , class_ :: String
                                    , level :: Int
                                    , xp :: Int
                                    , initiative :: Int
@@ -62,6 +66,8 @@ data NetworkPlayer = NetworkPlayer { name :: String
 instance ToJSON NetworkPlayer where
    toJSON np = object [
         "name" .= name np,
+        "race" .= race np,
+        "class_" .= class_ np,
         "level" .= level np,
         "xp" .= xp np,
         "initiative" .= initiative np,
@@ -82,6 +88,8 @@ buildNetworkPlayer :: Player -> NetworkPlayer
 buildNetworkPlayer player =
     NetworkPlayer
         (getName player)
+        (getRaceName player)
+        (getClassName player)
         (getLevel player)
         (getXp player)
         (getInitiative player)

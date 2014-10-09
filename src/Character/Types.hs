@@ -11,13 +11,13 @@ module Character.Types (
     Ability(..),
     Defense(..),
 
-    Race,
+    Race(..),
     newRace,
     getRacialSkill,
     getRacialAbility,
     getRacialSpeed,
 
-    Class,
+    Class(..),
     getClassDefense,
     newClass,
 ) where
@@ -104,13 +104,15 @@ getTrainedSkillAmount skill player =
     then 5
     else 0
 
-data Race = Race { getRawRacialSkills :: SkillMap
+data Race = Race { raceName :: String
+                 , getRawRacialSkills :: SkillMap
                  , getRawRacialAbilities :: AbilityMap
                  , getRawRacialSpeed :: Int }
 
-newRace :: [(Skill, Int)] -> [(Ability, Int)] -> Int -> Race
-newRace skills abilities speed =
-    Race (SkillMap (fromList skills))
+newRace :: String -> [(Skill, Int)] -> [(Ability, Int)] -> Int -> Race
+newRace name skills abilities speed =
+    Race name
+         (SkillMap (fromList skills))
          (AbilityMap (fromList abilities))
          speed
 
@@ -125,13 +127,14 @@ getRacialAbility :: Ability -> Race -> Int
 getRacialAbility abil race = let (AbilityMap abilMap) = getRawRacialAbilities race in
     findWithDefault 0 abil abilMap
 
-data Class = Class { getRawClassDefenses :: DefenseMap
+data Class = Class { className :: String
+                   , getRawClassDefenses :: DefenseMap
                    , getStartingHealthValue :: Int
                    , getHealthPerLevel :: Int }
 
-newClass :: [(Defense, Int)] -> Int -> Int -> Class
-newClass defenses startingHealth healthPerLevel =
-    Class (DefenseMap $ fromList defenses) startingHealth healthPerLevel
+newClass :: String -> [(Defense, Int)] -> Int -> Int -> Class
+newClass name defenses startingHealth healthPerLevel =
+    Class name (DefenseMap $ fromList defenses) startingHealth healthPerLevel
 
 getClassDefense :: Defense -> Class -> Int
 getClassDefense def class_ = let (DefenseMap defMap) = getRawClassDefenses class_ in

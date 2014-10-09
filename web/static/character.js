@@ -8,6 +8,8 @@ var getCharacter = function(name) {
 
 var populateFields = function(data) {
     document.getElementById('name').value = data.name;
+    document.getElementById('race').value = data.race;
+    document.getElementById('class_').value = data.class_;
     document.getElementById('level').value = data.level;
     document.getElementById('xp').value = data.xp;
     document.getElementById('initiative').value = data.initiative;

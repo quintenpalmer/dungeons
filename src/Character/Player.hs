@@ -1,4 +1,6 @@
 module Character.Player (
+    getRaceName,
+    getClassName,
     getAttribute,
     getInitiative,
     getAbilScore,
@@ -21,6 +23,8 @@ import Character.Util (
     readMaybe)
 import Character.Types (
     Player(..),
+    Class(..),
+    Race(..),
     getRacialSkill,
     getRacialAbility,
     getRacialSpeed,
@@ -56,6 +60,12 @@ getAttribute request param player = case request of
         Just def -> Just $ show $ getDefense def player
         Nothing -> Nothing
     _ -> Nothing
+
+getRaceName :: Player -> String
+getRaceName player = raceName $ getRace player
+
+getClassName :: Player -> String
+getClassName player = className $ getClass player
 
 getSpeed :: Player -> Int
 getSpeed player =

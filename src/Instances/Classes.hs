@@ -8,4 +8,4 @@ import Character.Types (
     newClass)
 
 druid :: Class
-druid = newClass [(Ref, 1), (Will, 1)] (12 + 9) 5
+druid = newClass "Druid" [(Ref, 1), (Will, 1)] (12 + 9) 5
