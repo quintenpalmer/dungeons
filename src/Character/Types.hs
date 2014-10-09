@@ -44,7 +44,7 @@ data Skill = Acrobatics |
              Religion |
              Stealth |
              Streetwise |
-             Thievery deriving (Ord, Eq, Show, Read)
+             Thievery deriving (Ord, Eq, Show, Read, Enum, Bounded)
 
 skillMap :: Map Skill Ability
 skillMap = fromList [
@@ -74,12 +74,12 @@ data Ability = Str |
                Dex |
                Int |
                Wis |
-               Cha deriving (Ord, Eq, Show, Read)
+               Cha deriving (Ord, Eq, Show, Read, Enum, Bounded)
 
 data Defense = Ac |
                Fort |
                Ref |
-               Will deriving (Ord, Eq, Show, Read)
+               Will deriving (Ord, Eq, Show, Read, Enum, Bounded)
 
 data Player = Player { getName :: String
                      , getLevel :: Int

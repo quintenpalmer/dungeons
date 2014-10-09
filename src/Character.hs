@@ -6,6 +6,8 @@ module Character (
     readMaybe
 ) where
 
+import Character.Util (
+    readMaybe)
 import Character.Player (
     getAbilScore,
     getAbilMod,
@@ -44,11 +46,6 @@ getAttribute request param player = case request of
     "defense" -> case readMaybe param of
         Just def -> Just $ show $ getDefense def player
         Nothing -> Nothing
-    _ -> Nothing
-
-readMaybe :: (Read a) => String -> Maybe a
-readMaybe s = case reads s of
-    [(x, "")] -> Just x
     _ -> Nothing
 
 showPlayer :: Player -> String
