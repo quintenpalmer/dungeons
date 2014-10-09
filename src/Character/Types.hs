@@ -83,14 +83,15 @@ data Defense = Ac |
 
 data Player = Player { getName :: String
                      , getLevel :: Int
+                     , getXp :: Int
                      , getRace :: Race
                      , getClass :: Class
                      , getRawTrainedSkills :: [Skill]
                      , getRawBaseStats :: BaseStats }
 
-newPlayer :: String -> Int -> Race -> Class -> [Skill] -> [(Ability, Int)] -> Player
-newPlayer name level race class_ trainedSkills baseStats =
-    Player name level race class_ trainedSkills $ BaseStats $ fromList baseStats
+newPlayer :: String -> Int -> Int -> Race -> Class -> [Skill] -> [(Ability, Int)] -> Player
+newPlayer name level xp race class_ trainedSkills baseStats =
+    Player name level xp race class_ trainedSkills $ BaseStats $ fromList baseStats
 
 getHealth :: Player -> Int
 getHealth player =

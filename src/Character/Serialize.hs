@@ -39,6 +39,7 @@ serializePlayerForTerminal player = unpack $ encodePretty $ buildNetworkPlayer p
 
 data NetworkPlayer = NetworkPlayer { name :: String
                                    , level :: Int
+                                   , xp :: Int
                                    , initiative :: Int
                                    , hitPoints :: Int
                                    , speed :: Int
@@ -52,6 +53,7 @@ instance ToJSON NetworkPlayer where
    toJSON np = object [
         "name" .= name np,
         "level" .= level np,
+        "xp" .= xp np,
         "initiative" .= initiative np,
         "hitPoints" .= hitPoints np,
         "speed" .= speed np,
@@ -65,6 +67,7 @@ buildNetworkPlayer :: Player -> NetworkPlayer
 buildNetworkPlayer player =
     let nName = getName player
         nLevel = getLevel player
+        nXp = getXp player
         nInitiative = getInitiative player
         nHitPoints = getHealth player
         nSpeed = getSpeed player
@@ -73,7 +76,7 @@ buildNetworkPlayer player =
         nAbilModsPlus = getAbilityModsPlus player
         nSkills = getSkills player
         nDefenses = getDefenses player in
-    NetworkPlayer nName nLevel nInitiative nHitPoints nSpeed nAbilScores nAbilMods nAbilModsPlus nSkills nDefenses
+    NetworkPlayer nName nLevel nXp nInitiative nHitPoints nSpeed nAbilScores nAbilMods nAbilModsPlus nSkills nDefenses
 
 
 getAbilityScores :: Player -> (Map String Int)

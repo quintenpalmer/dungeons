@@ -29,15 +29,16 @@ import Instances.Races (halfling)
 
 loadPlayer :: String -> Maybe Player
 loadPlayer jsonString = do
-    (FlatPlayer n l mc mr mts mbas) <- decode (pack jsonString)
+    (FlatPlayer n l x mc mr mts mbas) <- decode (pack jsonString)
     c <- parseClass mc
     r <- parseRace mr
     ts <- parseSkills mts
     bas <- parseBaseAbilityScores mbas
-    return $ newPlayer n l r c ts bas
+    return $ newPlayer n l x r c ts bas
 
 data FlatPlayer = FlatPlayer { name :: String
                              , level :: Int
+                             , xp :: Int
                              , class_ :: String
                              , race :: String
                              , trainedSkills :: [String]
@@ -48,6 +49,7 @@ instance FromJSON FlatPlayer where
     parseJSON (Object v) = FlatPlayer <$>
                            v .: "name" <*>
                            v .: "level" <*>
+                           v .: "xp" <*>
                            v .: "class_" <*>
                            v .: "race" <*>
                            v .: "trainedSkills" <*>

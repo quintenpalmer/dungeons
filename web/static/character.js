@@ -23,4 +23,5 @@ var populateFields = function(data) {
         document.getElementById(defName).value = data.defenses[defName];
     }
     document.getElementById('speed').value = data.speed;
+    document.getElementById('xp').value = data.xp;
 }
