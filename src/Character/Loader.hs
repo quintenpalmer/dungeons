@@ -6,15 +6,16 @@ module Character.Loader (
 
 import Data.Map (Map, toList)
 import Data.Maybe (fromJust)
+import Control.Applicative ((<$>),
+                            (<*>))
+import Control.Monad (mzero)
+import Data.ByteString.Lazy.Char8 (pack)
+
 import Data.Aeson (decode,
                    Object(..),
                    Value(..),
                    FromJSON(..),
                    (.:))
-import Control.Applicative ((<$>),
-                            (<*>))
-import Control.Monad (mzero)
-import Data.ByteString.Lazy.Char8 (pack)
 
 import Character (readMaybe)
 import Character.Types (Player,
