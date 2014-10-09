@@ -27,6 +27,15 @@ import Character.Types (Player,
 import Instances.Classes (druid)
 import Instances.Races (halfling)
 
+loadPlayer :: String -> Maybe Player
+loadPlayer jsonString = do
+    (FlatPlayer n l mc mr mts mbas) <- decode (pack jsonString)
+    c <- parseClass mc
+    r <- parseRace mr
+    ts <- parseSkills mts
+    bas <- parseBaseAbilityScores mbas
+    return $ newPlayer n l r c ts bas
+
 data FlatPlayer = FlatPlayer { name :: String
                              , level :: Int
                              , class_ :: String
@@ -44,15 +53,6 @@ instance FromJSON FlatPlayer where
                            v .: "trainedSkills" <*>
                            v .: "baseAbilityScores"
     parseJSON _ = mzero
-
-loadPlayer :: String -> Maybe Player
-loadPlayer jsonString = do
-    (FlatPlayer n l mc mr mts mbas) <- decode (pack jsonString)
-    c <- parseClass mc
-    r <- parseRace mr
-    ts <- parseSkills mts
-    bas <- parseBaseAbilityScores mbas
-    return $ newPlayer n l r c ts bas
 
 
 parseRace :: String -> Maybe Race

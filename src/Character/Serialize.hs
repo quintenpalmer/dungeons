@@ -31,6 +31,12 @@ import Data.Aeson(encode,
                   object,
                   (.=))
 
+serializePlayerForNetwork :: Player -> String
+serializePlayerForNetwork player = unpack $ encode $ buildNetworkPlayer player
+
+serializePlayerForTerminal :: Player -> String
+serializePlayerForTerminal player = unpack $ encodePretty $ buildNetworkPlayer player
+
 data NetworkPlayer = NetworkPlayer { name :: String
                                    , level :: Int
                                    , initiative :: Int
@@ -68,12 +74,6 @@ buildNetworkPlayer player =
         nSkills = getSkills player
         nDefenses = getDefenses player in
     NetworkPlayer nName nLevel nInitiative nHitPoints nSpeed nAbilScores nAbilMods nAbilModsPlus nSkills nDefenses
-
-serializePlayerForNetwork :: Player -> String
-serializePlayerForNetwork player = unpack $ encode $ buildNetworkPlayer player
-
-serializePlayerForTerminal :: Player -> String
-serializePlayerForTerminal player = unpack $ encodePretty $ buildNetworkPlayer player
 
 
 getAbilityScores :: Player -> (Map String Int)
