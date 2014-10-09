@@ -22,7 +22,10 @@ import Character.Player (
     getDefense,
     getInitiative,
     getSpeed,
-    getHealth)
+    getHealth,
+    getBloodied,
+    getSurgeValue,
+    getSurgesPerDay)
 
 import Data.ByteString.Lazy.Char8 (unpack)
 import Data.Aeson.Encode.Pretty (encodePretty)
@@ -42,6 +45,9 @@ data NetworkPlayer = NetworkPlayer { name :: String
                                    , xp :: Int
                                    , initiative :: Int
                                    , hitPoints :: Int
+                                   , bloodied :: Int
+                                   , surgeValue :: Int
+                                   , surgesPerDay :: Int
                                    , speed :: Int
                                    , abilityScores :: (Map String Int)
                                    , abilityMods :: (Map String Int)
@@ -56,6 +62,9 @@ instance ToJSON NetworkPlayer where
         "xp" .= xp np,
         "initiative" .= initiative np,
         "hitPoints" .= hitPoints np,
+        "bloodied" .= bloodied np,
+        "surgeValue" .= surgeValue np,
+        "surgesPerDay" .= surgesPerDay np,
         "speed" .= speed np,
         "abilityScores" .= abilityScores np,
         "abilityMods" .= abilityMods np,
@@ -71,6 +80,9 @@ buildNetworkPlayer player =
         (getXp player)
         (getInitiative player)
         (getHealth player)
+        (getBloodied player)
+        (getSurgeValue player)
+        (getSurgesPerDay player)
         (getSpeed player)
         (getAbilityScores player)
         (getAbilityMods player)

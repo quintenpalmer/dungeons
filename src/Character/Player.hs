@@ -6,8 +6,11 @@ module Character.Player (
     getAbilModPlus,
     getDefense,
     getSpeed,
+    getSkill,
     getHealth,
-    getSkill
+    getBloodied,
+    getSurgeValue,
+    getSurgesPerDay
 ) where
 
 import Character.Util (
@@ -96,6 +99,15 @@ getInitiative :: Player -> Int
 getInitiative player =
     (getAbilMod Dex player) +
     (getHalfPlayerLevel player)
+
+getBloodied :: Player -> Int
+getBloodied player = getHealth player `div` 2
+
+getSurgeValue :: Player -> Int
+getSurgeValue player = getBloodied player `div` 2
+
+getSurgesPerDay :: Player -> Int
+getSurgesPerDay player = (getAbilMod Con player) + 7
 
 getHalfPlayerLevel :: Player -> Int
 getHalfPlayerLevel player = (getHalfLevel $ getLevel player)

@@ -16,6 +16,9 @@ var populateFields = function(data) {
         document.getElementById('abilModPlus' + abilName).value = data.abilityModsPlus[abilName];
     }
     document.getElementById('health').value = data.hitPoints;
+    document.getElementById('bloodied').value = data.bloodied;
+    document.getElementById('surgeValue').value = data.surgeValue;
+    document.getElementById('surgesPerDay').value = data.surgesPerDay;
     for (var skillName in data.skills) {
         document.getElementById(skillName).value = data.skills[skillName];
     }
