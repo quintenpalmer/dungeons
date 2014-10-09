@@ -13,8 +13,16 @@ import System.IO (hPutStrLn,
                   hFlush,
                   hClose)
 
-import Character (getAttribute)
-import Instances.Prompt (prompt)
+import Character (getAttribute, Player)
+
+import Data.Maybe (fromJust)
+import Character.Loader (loadPlayer)
+
+prompt :: IO Player
+prompt = do
+    let filename = "prompt"
+    jsonString <- readFile $ "data/" ++ filename ++ ".json"
+    return $ fromJust $ loadPlayer jsonString
 
 main :: IO ()
 main = withSocketsDo $ do
@@ -30,18 +38,19 @@ loop sock = do
 
 respond :: Handle -> IO ()
 respond h = do
+    player <- prompt
     request <- hGetLine h
-    hPutStrLn h $ getResponse request
+    hPutStrLn h $ getResponse request player
     hFlush h
     respond h
 
-getResponse :: String -> String
-getResponse msg = case splitOn ":" msg of
-    [request] -> sendServerRequest request ""
-    [request, params] -> sendServerRequest request params
+getResponse :: String -> Player -> String
+getResponse msg player = case splitOn ":" msg of
+    [request] -> sendServerRequest request "" player
+    [request, params] -> sendServerRequest request params player
     _ -> "{\"error\": \"request: " ++ msg ++ " must have one or no parameters\"}"
 
-sendServerRequest :: String -> String -> String
-sendServerRequest request params = case getAttribute request params prompt of
+sendServerRequest :: String -> String -> Player -> String
+sendServerRequest request params player = case getAttribute request params player of
     Just response -> "{\"" ++ request ++ "\": \"" ++ response ++ "\"}"
     Nothing -> "{\"error\": \"attribute " ++ request ++ ":" ++ params ++ " not found\"}"

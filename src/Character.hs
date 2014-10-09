@@ -1,6 +1,9 @@
 module Character (
+    Player,
+    newPlayer,
     showPlayer,
     getAttribute,
+    readMaybe
 ) where
 
 import Character.Player (
@@ -14,6 +17,7 @@ import Character.Player (
     getHealth)
 import Character.Types (
     Player(..),
+    newPlayer,
     Ability(..),
     Skill(..),
     Defense(..))

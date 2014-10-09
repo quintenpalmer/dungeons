@@ -1,0 +1,20 @@
+{
+    "name": "Prompt",
+    "level": 4,
+    "class_": "druid",
+    "race": "halfling",
+    "trainedSkills": [
+        "Endurance",
+        "Heal",
+        "Nature",
+        "Perception"
+    ],
+    "baseAbilityScores": {
+        "Str": 12,
+        "Con": 14,
+        "Dex": 16,
+        "Int": 11,
+        "Wis": 18,
+        "Cha": 11
+    }
+}
