@@ -1,3 +1,5 @@
+module Main where
+
 import Control.Concurrent (forkIO)
 import Data.List.Split (splitOn)
 import Network (accept,
@@ -15,10 +17,10 @@ import System.IO (hPutStrLn,
 
 import Character (getAttribute,
                   Player,
-                  serializePlayerForNetwork)
+                  serializePlayerForNetwork,
+                  loadPlayer)
 
 import Data.Maybe (fromJust)
-import Character.Loader (loadPlayer)
 
 prompt :: IO Player
 prompt = do

@@ -15,16 +15,39 @@ build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
-executable dungeons
-  main-is:             Main.hs
-  -- other-modules:       
-  -- other-extensions:    
-  build-depends:       base >=4.6 && <4.7, containers >=0.5 && <0.6, aeson == 0.8.*, aeson-pretty == 0.7.*, bytestring == 0.10.*, text == 1.*
+library
+  exposed-modules:     Character,
+                       Character.Loader,
+                       Character.Serialize
+  other-modules:       Character.Types,
+                       Character.Player,
+                       Character.Util,
+                       Instances.Races,
+                       Instances.Classes
+
+  other-extensions:    OverloadedStrings
+
+  build-depends:       base >=4.6 && <4.7,
+                       containers >=0.5 && <0.6,
+                       bytestring >=0.10 && <0.11,
+                       aeson >=0.6 && <0.8,
+                       aeson-pretty >=0.7 && <0.8
+
   hs-source-dirs:      src
+  ghc-options:         -Wall
+  default-language:    Haskell2010
+
+executable test
+  main-is:             Main.hs
+  build-depends:       base, dungeons
   default-language:    Haskell2010
 
 executable server
   main-is:             Server.hs
-  build-depends:       base >=4.6 && <4.7, containers >=0.5 && <0.6, network >= 2.5 && <= 3.0, split == 0.2.*, bytestring == 0.10.*, aeson == 0.8.*, aeson-pretty == 0.7.*
-  hs-source-dirs:      src
+
+  build-depends:       base,
+                       network >=2.4 && <2.5,
+                       split >=0.2 && <0.3,
+                       dungeons
+
   default-language:    Haskell2010

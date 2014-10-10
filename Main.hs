@@ -1,7 +1,9 @@
+module Main where
+
 import Data.Maybe (fromJust)
 
-import Character.Loader (loadPlayer)
-import Character (serializePlayerForTerminal)
+import Character (loadPlayer,
+                  serializePlayerForTerminal)
 
 main = do
     let filename = "prompt"

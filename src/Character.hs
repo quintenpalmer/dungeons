@@ -4,6 +4,7 @@ module Character (
     getAttribute,
     serializePlayerForNetwork,
     serializePlayerForTerminal,
+    loadPlayer,
     readMaybe
 ) where
 
@@ -15,5 +16,7 @@ import Character.Types (
 import Character.Serialize (
     serializePlayerForNetwork,
     serializePlayerForTerminal)
+import Character.Loader (
+    loadPlayer)
 import Character.Util (
     readMaybe)
