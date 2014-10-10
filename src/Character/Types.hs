@@ -23,7 +23,7 @@ module Character.Types (
 ) where
 
 import Data.Map (
-    Map(..),
+    Map,
     fromList,
     (!),
     findWithDefault)
@@ -46,8 +46,8 @@ data Skill = Acrobatics |
              Streetwise |
              Thievery deriving (Ord, Eq, Show, Read, Enum, Bounded)
 
-skillMap :: Map Skill Ability
-skillMap = fromList [
+skillAbilMap :: Map Skill Ability
+skillAbilMap = fromList [
     (Acrobatics, Dex),
     (Arcana, Int),
     (Athletics, Str),
@@ -67,7 +67,7 @@ skillMap = fromList [
     (Thievery, Dex)]
 
 getSkillAbil :: Skill -> Ability
-getSkillAbil skill = skillMap ! skill
+getSkillAbil skill = skillAbilMap ! skill
 
 data Ability = Str |
                Con |
@@ -144,7 +144,7 @@ getClassDefense def class_ = let (DefenseMap defMap) = getRawClassDefenses class
 data BaseStats = BaseStats (Map Ability Int)
 
 getRawAbilityScore :: Ability -> BaseStats -> Int
-getRawAbilityScore abil (BaseStats map) = map ! abil
+getRawAbilityScore abil (BaseStats baseStats) = baseStats ! abil
 
 data SkillMap = SkillMap (Map Skill Int)
 
@@ -154,6 +154,6 @@ data DefenseMap = DefenseMap (Map Defense Int)
 
 -- Need to Use
 
-data DefensesAbilities = DefensesAbilities [Ability]
+-- data DefensesAbilities = DefensesAbilities [Ability]
 
-data Defenses = Defenses [DefensesAbilities]
+-- data Defenses = Defenses [DefensesAbilities]

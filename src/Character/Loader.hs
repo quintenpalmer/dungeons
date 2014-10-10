@@ -5,19 +5,17 @@ module Character.Loader (
 ) where
 
 import Data.Map (Map, toList)
-import Data.Maybe (fromJust)
 import Control.Applicative ((<$>),
                             (<*>))
 import Control.Monad (mzero)
 import Data.ByteString.Lazy.Char8 (pack)
 
 import Data.Aeson (decode,
-                   Object(..),
                    Value(..),
                    FromJSON(..),
                    (.:))
 
-import Character (readMaybe)
+import Character.Util (readMaybe)
 import Character.Types (Player,
                         Race,
                         Class,
@@ -73,11 +71,11 @@ parseSkills (x:xs) = do
     return (skill:skills)
 
 parseBaseAbilityScores :: (Map String Int) -> Maybe [(Ability, Int)]
-parseBaseAbilityScores map = parseHelper $ toList map
+parseBaseAbilityScores baseScores = parseHelper $ toList baseScores
 
 parseHelper :: [(String, Int)] -> Maybe [(Ability, Int)]
 parseHelper [] = Just []
-parseHelper ((name, val):xs) = do
-    ability <- readMaybe name
+parseHelper ((abilName, val):xs) = do
+    ability <- readMaybe abilName
     abilities <- parseHelper xs
     return ((ability, val):abilities)

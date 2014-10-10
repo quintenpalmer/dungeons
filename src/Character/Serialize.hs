@@ -5,7 +5,7 @@ module Character.Serialize (
     serializePlayerForTerminal
 ) where
 
-import Data.Map (Map, empty, fromList)
+import Data.Map (Map, fromList)
 
 import Character.Types (
     Player(..),
@@ -16,7 +16,6 @@ import Character.Util (allValues)
 import Character.Player (
     getRaceName,
     getClassName,
-    getAttribute,
     getAbilScore,
     getAbilMod,
     getAbilModPlus,
