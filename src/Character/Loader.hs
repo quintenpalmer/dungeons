@@ -19,6 +19,7 @@ import Character.Util (readMaybe)
 import Character.Types (Player,
                         Race,
                         Feat(..),
+                        MagicItem(..),
                         Class,
                         Skill,
                         Ability,
@@ -35,18 +36,20 @@ import Instances.Races (halfling)
 
 loadPlayer :: String -> Maybe Player
 loadPlayer jsonString = do
-    (FlatPlayer n mfs l x mc mr ma mw mts mbas) <- decode (pack jsonString)
+    (FlatPlayer n mfs mmis l x mc mr ma mw mts mbas) <- decode (pack jsonString)
     fs <- parseFeats mfs
+    mis <- parseMagicItems mmis
     c <- parseClass mc
     r <- parseRace mr
     a <- parseArmor ma
     w <- parseWeapon mw
     ts <- parseSkills mts
     bas <- parseBaseAbilityScores mbas
-    return $ newPlayer n fs l x r c a w ts bas
+    return $ newPlayer n fs l x r c a w mis ts bas
 
 data FlatPlayer = FlatPlayer { name :: String
                              , feats :: [String]
+                             , magicItems :: [String]
                              , level :: Int
                              , xp :: Int
                              , class_ :: String
@@ -61,6 +64,7 @@ instance FromJSON FlatPlayer where
     parseJSON (Object v) = FlatPlayer <$>
                            v .: "name" <*>
                            v .: "feats" <*>
+                           v .: "magicItems" <*>
                            v .: "level" <*>
                            v .: "xp" <*>
                            v .: "class_" <*>
@@ -108,6 +112,19 @@ parseFeat "ritualCasting" = Just $ Feat "Ritual Casting" "Animal Messanger"
 parseFeat "improvedTiger" = Just $ Feat "Improved Tiger" "+2 damage with combat advantage in beast form"
 parseFeat "primalFury" = Just $ Feat "Primal Fury" "+1 to attacks with primal powers against bloodied enemies"
 parseFeat _ = Nothing
+
+parseMagicItems :: [String] -> Maybe [MagicItem]
+parseMagicItems [] = Just []
+parseMagicItems (x:xs) = do
+    magicItem <- parseMagicItem x
+    ms <- parseMagicItems xs
+    return (magicItem:ms)
+
+parseMagicItem :: String -> Maybe MagicItem
+parseMagicItem "autumnHarvestTotem" = Just $ MagicItem "Autumn Harvest Totem" "On crit +1d6 per plus or +1d10 damage per plus vs a bloodied creature. - Attacks made through this item do extra damage against bloodied creatures equal to 1 + 1/2 enchantment"
+parseMagicItem "pouncingBeastArmor" = Just $ MagicItem "Pouncing Beast Armor" "+1 AC (Hide Armor) - The Armor urges you to attack. - Wild Shape: on transform you shift +1 square. - Power (Daily): Shift up to 5 squares on transformation, MUST end adjacent to enemy"
+parseMagicItem "emeraldStaff" = Just $ MagicItem "Emerald Staff" "It glows with an errie light that catches the eye. Gold elvish runes inscripted on the handle. - Major Action (Encounter Power): Can dominate animal of lesser level (Wisdom vs. Will) x 1/2 animal level"
+parseMagicItem _ = Nothing
 
 parseBaseAbilityScores :: (Map String Int) -> Maybe [(Ability, Int)]
 parseBaseAbilityScores baseScores = parseHelper $ toList baseScores

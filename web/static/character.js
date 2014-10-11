@@ -41,6 +41,14 @@ var populateFields = function(data) {
         currentFeat.setAttribute('href', 'javascript:setSelected("' + featName + '", "' + data.feats[featName] + '")');
         i += 1;
     }
+    var i = 1;
+    for (var magicItemName in data.magicItems) {
+        magicItemIndex = "magicItem" + i;
+        currentFeat = document.getElementById(magicItemIndex)
+        currentFeat.innerHTML = magicItemName;
+        currentFeat.setAttribute('href', 'javascript:setSelected("' + magicItemName + '", "' + data.magicItems[magicItemName] + '")');
+        i += 1;
+    }
 }
 
 var setSelected = function(name, desc) {

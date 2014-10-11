@@ -18,6 +18,9 @@ module Character.Player (
     getFeats,
     getFeatName,
     getFeatDescription,
+    getMagicItems,
+    getMagicItemName,
+    getMagicItemDescription,
     getArmorName,
     getWeaponName
 ) where
@@ -31,6 +34,7 @@ import Character.Types (
     Class(..),
     Race(..),
     Feat(..),
+    MagicItem(..),
     getRacialSkill,
     getRacialAbility,
     getRacialSpeed,
@@ -143,6 +147,15 @@ getFeatName = getRawFeatName
 
 getFeatDescription :: Feat -> String
 getFeatDescription = getRawFeatDescription
+
+getMagicItems :: Player -> [MagicItem]
+getMagicItems player = getRawMagicItems player
+
+getMagicItemName :: MagicItem -> String
+getMagicItemName = getRawMagicItemName
+
+getMagicItemDescription :: MagicItem -> String
+getMagicItemDescription = getRawMagicItemDescription
 
 getBloodied :: Player -> Int
 getBloodied player = getHealth player `div` 2

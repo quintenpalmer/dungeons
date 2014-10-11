@@ -127,6 +127,18 @@
                             <div class="col-md-3">{{ name }}</div>
                         </div>
                     {% endfor %}
+
+                </div>
+
+                <div class="row">
+                    <h1>Magic Items</h1>
+                    {% for name in ("magicItem1", "magicItem2", "magicItem3", "magicItem4", "magicItem5") %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><a id="{{ name }}"></a></p>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -169,7 +181,7 @@
                 <div class="row">
                     <h1>Selected</h1>
                     <h2 id="selectedTitle"></h1>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <p id="selected"></p>
                     </div>
                 </div>

@@ -33,6 +33,7 @@ module Character.Types (
     newClass,
 
     Feat(..),
+    MagicItem(..)
 ) where
 
 import Data.Map (
@@ -49,12 +50,13 @@ data Player = Player { getName :: String
                      , getClass :: Class
                      , getArmor :: Armor
                      , getWeapons :: Weapons
+                     , getRawMagicItems :: [MagicItem]
                      , getRawTrainedSkills :: [Skill]
                      , getRawBaseStats :: BaseStats }
 
-newPlayer :: String -> [Feat] -> Int -> Int -> Race -> Class -> Armor -> Weapons -> [Skill] -> [(Ability, Int)] -> Player
-newPlayer name feats level xp race class_ armor weapon trainedSkills baseStats =
-    Player name feats level xp race class_ armor weapon trainedSkills $ BaseStats $ fromList baseStats
+newPlayer :: String -> [Feat] -> Int -> Int -> Race -> Class -> Armor -> Weapons -> [MagicItem] -> [Skill] -> [(Ability, Int)] -> Player
+newPlayer name feats level xp race class_ armor weapon magicItems trainedSkills baseStats =
+    Player name feats level xp race class_ armor weapon magicItems trainedSkills $ BaseStats $ fromList baseStats
 
 data Skill = Acrobatics |
              Arcana |
@@ -216,6 +218,11 @@ instance Show OneHander where
 
 data Feat = Feat { getRawFeatName :: String
                  , getRawFeatDescription :: String }
+
+-- Magic Items
+
+data MagicItem = MagicItem { getRawMagicItemName :: String
+                           , getRawMagicItemDescription :: String }
 
 -- Base Stats
 

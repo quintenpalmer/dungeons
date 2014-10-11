@@ -25,5 +25,10 @@
         "ritualCasting",
         "improvedTiger",
         "primalFury"
+    ],
+    "magicItems": [
+        "autumnHarvestTotem",
+        "pouncingBeastArmor",
+        "emeraldStaff"
     ]
 }
