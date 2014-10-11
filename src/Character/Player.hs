@@ -16,6 +16,8 @@ module Character.Player (
     getSurgeValue,
     getSurgesPerDay,
     getFeats,
+    getFeatName,
+    getFeatDescription,
     getArmorName,
     getWeaponName
 ) where
@@ -133,8 +135,14 @@ getInitiative player =
     (getAbilMod Dex player) +
     (getHalfPlayerLevel player)
 
-getFeats :: Player -> [String]
-getFeats player = map getFeatName $ getRawFeats player
+getFeats :: Player -> [Feat]
+getFeats player = getRawFeats player
+
+getFeatName :: Feat -> String
+getFeatName = getRawFeatName
+
+getFeatDescription :: Feat -> String
+getFeatDescription = getRawFeatDescription
 
 getBloodied :: Player -> Int
 getBloodied player = getHealth player `div` 2

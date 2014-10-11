@@ -118,13 +118,6 @@
 
             <div class="col-md-4">
                 <div class="row">
-                    <h1>Filler</h1>
-                    <div class="col-md-3">
-                        <input id="filler" class="form-control" type="text">
-                    </div>
-                    <div class="col-md-3">filler</div>
-                </div>
-                <div class="row">
                     <h1>Defenses</h1>
                     {% for name in ("Ac", "Fort", "Ref", "Will") %}
                         <div class="row">
@@ -167,10 +160,18 @@
                     {% for name in ("feat1", "feat2", "feat3", "feat4", "feat5") %}
                         <div class="row">
                             <div class="col-md-6">
-                                <input id="{{ name }}" class="form-control" type="text">
+                                <p><a id="{{ name }}"></a></p>
                             </div>
                         </div>
                     {% endfor %}
+                </div>
+
+                <div class="row">
+                    <h1>Selected</h1>
+                    <h2 id="selectedTitle"></h1>
+                    <div class="col-md-6">
+                        <p id="selected"></p>
+                    </div>
                 </div>
             </div>
         </div>

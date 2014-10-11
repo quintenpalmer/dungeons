@@ -212,8 +212,10 @@ instance Show OneHander where
         SmallAxe -> "Axe"
         SmallSword -> "Sword"
 
-data Feat = Feat { getFeatName :: String
-                 , getFeatDescription :: String }
+-- Feats
+
+data Feat = Feat { getRawFeatName :: String
+                 , getRawFeatDescription :: String }
 
 -- Base Stats
 

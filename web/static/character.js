@@ -35,9 +35,15 @@ var populateFields = function(data) {
     document.getElementById('passivePerception').value = data.passivePerception;
     var i = 1;
     for (var featName in data.feats) {
-        console.log("feat" + i);
-        console.log(featName);
-        document.getElementById('feat' + i).value = data.feats[featName];
+        featIndex = "feat" + i;
+        currentFeat = document.getElementById(featIndex)
+        currentFeat.innerHTML = featName;
+        currentFeat.setAttribute('href', 'javascript:setSelected("' + featName + '", "' + data.feats[featName] + '")');
         i += 1;
     }
+}
+
+var setSelected = function(name, desc) {
+    document.getElementById('selectedTitle').innerHTML = name;
+    document.getElementById('selected').innerHTML = desc;
 }

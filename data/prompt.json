@@ -21,9 +21,9 @@
         "Cha": 11
     },
     "feats": [
-        "Enraged Boar Form",
-        "Ritual Casting",
-        "Improved Tiger",
-        "Primal Fury"
+        "enragedBoarForm",
+        "ritualCasting",
+        "improvedTiger",
+        "primalFury"
     ]
 }

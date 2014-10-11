@@ -29,6 +29,8 @@ import Character.Player (
     getSpeed,
     getHealth,
     getFeats,
+    getFeatName,
+    getFeatDescription,
     getBloodied,
     getSurgeValue,
     getSurgesPerDay)
@@ -64,7 +66,7 @@ data NetworkPlayer = NetworkPlayer { name :: String
                                    , abilityModsPlus :: (Map String Int)
                                    , skills :: (Map String Int)
                                    , defenses :: (Map String Int)
-                                   , feats :: [String]
+                                   , feats :: (Map String String)
                                    , armor :: String
                                    , weapons :: String
                                    }
@@ -114,10 +116,13 @@ buildNetworkPlayer player =
         (getAbilityModsPlus player)
         (getSkills player)
         (getDefenses player)
-        (getFeats player)
+        (getFeatMap player)
         (getArmorName player)
         (getWeaponName player)
 
+
+getFeatMap :: Player -> (Map String String)
+getFeatMap player = fromList $ map (\x -> (getFeatName x, getFeatDescription x)) (getFeats player)
 
 getAbilityScores :: Player -> (Map String Int)
 getAbilityScores player = fromList $ map (\x -> (show x, getAbilScore x player)) (allValues :: [Ability])

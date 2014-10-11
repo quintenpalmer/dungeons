@@ -98,9 +98,16 @@ parseSkills (x:xs) = do
 parseFeats :: [String] -> Maybe [Feat]
 parseFeats [] = Just []
 parseFeats (x:xs) = do
-    feat <- Just $ Feat x ""
-    feats <- parseFeats xs
-    return (feat:feats)
+    feat <- parseFeat x
+    fs <- parseFeats xs
+    return (feat:fs)
+
+parseFeat :: String -> Maybe Feat
+parseFeat "enragedBoarForm" = Just $ Feat "Enraged Boar Form" "+1 attack, +2 damage when charging in beast form"
+parseFeat "ritualCasting" = Just $ Feat "Ritual Casting" "Animal Messanger"
+parseFeat "improvedTiger" = Just $ Feat "Improved Tiger" "+2 damage with combat advantage in beast form"
+parseFeat "primalFury" = Just $ Feat "Primal Fury" "+1 to attacks with primal powers against bloodied enemies"
+parseFeat _ = Nothing
 
 parseBaseAbilityScores :: (Map String Int) -> Maybe [(Ability, Int)]
 parseBaseAbilityScores baseScores = parseHelper $ toList baseScores
