@@ -34,7 +34,7 @@ def get_character_info_from_server(name):
 
 def send_request(name, s):
     s.sendall(name + '\n')
-    data = s.recv(1024)
+    data = s.recv(8196)
     return data
 
 
