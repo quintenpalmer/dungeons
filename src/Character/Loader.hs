@@ -18,27 +18,41 @@ import Data.Aeson (decode,
 import Character.Util (readMaybe)
 import Character.Types (Player,
                         Race,
+                        Feat(..),
                         Class,
                         Skill,
                         Ability,
-                        newPlayer)
+                        newPlayer,
+                        Armor(..),
+                        ArmorType(..),
+                        Weapons(..),
+                        OneHanderType(..),
+                        TwoHanderType(..),
+                        TwoHander(..),
+                        OneHander(..))
 import Instances.Classes (druid)
 import Instances.Races (halfling)
 
 loadPlayer :: String -> Maybe Player
 loadPlayer jsonString = do
-    (FlatPlayer n l x mc mr mts mbas) <- decode (pack jsonString)
+    (FlatPlayer n mfs l x mc mr ma mw mts mbas) <- decode (pack jsonString)
+    fs <- parseFeats mfs
     c <- parseClass mc
     r <- parseRace mr
+    a <- parseArmor ma
+    w <- parseWeapon mw
     ts <- parseSkills mts
     bas <- parseBaseAbilityScores mbas
-    return $ newPlayer n l x r c ts bas
+    return $ newPlayer n fs l x r c a w ts bas
 
 data FlatPlayer = FlatPlayer { name :: String
+                             , feats :: [String]
                              , level :: Int
                              , xp :: Int
                              , class_ :: String
                              , race :: String
+                             , armor :: String
+                             , weapon :: String
                              , trainedSkills :: [String]
                              , baseAbilityScores :: (Map String Int) } deriving Show
 
@@ -46,14 +60,25 @@ data FlatPlayer = FlatPlayer { name :: String
 instance FromJSON FlatPlayer where
     parseJSON (Object v) = FlatPlayer <$>
                            v .: "name" <*>
+                           v .: "feats" <*>
                            v .: "level" <*>
                            v .: "xp" <*>
                            v .: "class_" <*>
                            v .: "race" <*>
+                           v .: "armor" <*>
+                           v .: "weapon" <*>
                            v .: "trainedSkills" <*>
                            v .: "baseAbilityScores"
     parseJSON _ = mzero
 
+
+parseArmor :: String -> Maybe Armor
+parseArmor "leather" = Just $ Armor Leather 2
+parseArmor _ = Nothing
+
+parseWeapon :: String -> Maybe Weapons
+parseWeapon "staff" = Just $ TwoHandedWeapon $ TwoHander Staff 8
+parseWeapon _ = Nothing
 
 parseRace :: String -> Maybe Race
 parseRace "halfling" = Just halfling
@@ -69,6 +94,13 @@ parseSkills (x:xs) = do
     skill <- readMaybe x
     skills <- parseSkills xs
     return (skill:skills)
+
+parseFeats :: [String] -> Maybe [Feat]
+parseFeats [] = Just []
+parseFeats (x:xs) = do
+    feat <- Just $ Feat x ""
+    feats <- parseFeats xs
+    return (feat:feats)
 
 parseBaseAbilityScores :: (Map String Int) -> Maybe [(Ability, Int)]
 parseBaseAbilityScores baseScores = parseHelper $ toList baseScores

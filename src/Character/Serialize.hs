@@ -16,6 +16,8 @@ import Character.Util (allValues)
 import Character.Player (
     getRaceName,
     getClassName,
+    getArmorName,
+    getWeaponName,
     getAbilScore,
     getAbilMod,
     getAbilModPlus,
@@ -26,6 +28,7 @@ import Character.Player (
     getPassivePerception,
     getSpeed,
     getHealth,
+    getFeats,
     getBloodied,
     getSurgeValue,
     getSurgesPerDay)
@@ -60,7 +63,11 @@ data NetworkPlayer = NetworkPlayer { name :: String
                                    , abilityMods :: (Map String Int)
                                    , abilityModsPlus :: (Map String Int)
                                    , skills :: (Map String Int)
-                                   , defenses :: (Map String Int) }
+                                   , defenses :: (Map String Int)
+                                   , feats :: [String]
+                                   , armor :: String
+                                   , weapons :: String
+                                   }
 
 instance ToJSON NetworkPlayer where
    toJSON np = object [
@@ -81,7 +88,10 @@ instance ToJSON NetworkPlayer where
         "abilityMods" .= abilityMods np,
         "abilityModsPlus" .= abilityModsPlus np,
         "skills" .= skills np,
-        "defenses" .= defenses np]
+        "defenses" .= defenses np,
+        "feats" .= feats np,
+        "armor" .= armor np,
+        "weapons" .= weapons np]
 
 buildNetworkPlayer :: Player -> NetworkPlayer
 buildNetworkPlayer player =
@@ -104,6 +114,9 @@ buildNetworkPlayer player =
         (getAbilityModsPlus player)
         (getSkills player)
         (getDefenses player)
+        (getFeats player)
+        (getArmorName player)
+        (getWeaponName player)
 
 
 getAbilityScores :: Player -> (Map String Int)

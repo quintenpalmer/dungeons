@@ -14,7 +14,10 @@ module Character.Player (
     getHealth,
     getBloodied,
     getSurgeValue,
-    getSurgesPerDay
+    getSurgesPerDay,
+    getFeats,
+    getArmorName,
+    getWeaponName
 ) where
 
 import Character.Util (
@@ -25,16 +28,23 @@ import Character.Types (
     Player(..),
     Class(..),
     Race(..),
+    Feat(..),
     getRacialSkill,
     getRacialAbility,
     getRacialSpeed,
     getClassDefense,
+    getRawArmorName,
+    getRawWeaponName,
     getHealth,
     getSkillAbil,
     getTrainedSkillAmount,
     Ability(..),
     Skill(..),
     Defense(..),
+    Armor(..),
+    ArmorType(..),
+    Weapons(..),
+    getAcFromArmor,
     getRawAbilityScore)
 
 getAttribute :: String -> String -> Player -> Maybe String
@@ -98,7 +108,18 @@ getDefense defense player =
     (getHalfPlayerLevel player) +
     (maximum (map
         ((flip getAbilMod) player)
-        (getDefenseModifiers defense)))
+        (getDefenseModifiers defense))) +
+    (getArmorIfAc defense player)
+
+getArmorIfAc :: Defense -> Player -> Int
+getArmorIfAc Ac player = getAcFromArmor $ getArmor player
+getArmorIfAc _ _ = 0
+
+getArmorName :: Player -> String
+getArmorName player = getRawArmorName $ getArmor player
+
+getWeaponName :: Player -> String
+getWeaponName player = getRawWeaponName $ getWeapons player
 
 getDefenseModifiers :: Defense -> [Ability]
 getDefenseModifiers defense = case defense of
@@ -111,6 +132,9 @@ getInitiative :: Player -> Int
 getInitiative player =
     (getAbilMod Dex player) +
     (getHalfPlayerLevel player)
+
+getFeats :: Player -> [String]
+getFeats player = map getFeatName $ getRawFeats player
 
 getBloodied :: Player -> Int
 getBloodied player = getHealth player `div` 2

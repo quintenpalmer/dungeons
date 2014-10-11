@@ -4,6 +4,8 @@
     "xp": 4450,
     "class_": "druid",
     "race": "halfling",
+    "armor": "leather",
+    "weapon": "staff",
     "trainedSkills": [
         "Endurance",
         "Heal",
@@ -17,5 +19,11 @@
         "Int": 11,
         "Wis": 18,
         "Cha": 11
-    }
+    },
+    "feats": [
+        "Enraged Boar Form",
+        "Ritual Casting",
+        "Improved Tiger",
+        "Primal Fury"
+    ]
 }

@@ -9,6 +9,8 @@ var getCharacter = function(name) {
 var populateFields = function(data) {
     document.getElementById('name').value = data.name;
     document.getElementById('race').value = data.race;
+    document.getElementById('armor').value = data.armor;
+    document.getElementById('weapons').value = data.weapons;
     document.getElementById('class_').value = data.class_;
     document.getElementById('level').value = data.level;
     document.getElementById('xp').value = data.xp;
@@ -31,4 +33,11 @@ var populateFields = function(data) {
     document.getElementById('speed').value = data.speed;
     document.getElementById('passiveInsight').value = data.passiveInsight;
     document.getElementById('passivePerception').value = data.passivePerception;
+    var i = 1;
+    for (var featName in data.feats) {
+        console.log("feat" + i);
+        console.log(featName);
+        document.getElementById('feat' + i).value = data.feats[featName];
+        i += 1;
+    }
 }
