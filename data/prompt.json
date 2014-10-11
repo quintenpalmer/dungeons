@@ -30,5 +30,8 @@
         "autumnHarvestTotem",
         "pouncingBeastArmor",
         "emeraldStaff"
+    ],
+    "powers": [
+        "wildShape"
     ]
 }

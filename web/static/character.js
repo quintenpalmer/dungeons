@@ -49,6 +49,14 @@ var populateFields = function(data) {
         currentFeat.setAttribute('href', 'javascript:setSelected("' + magicItemName + '", "' + data.magicItems[magicItemName] + '")');
         i += 1;
     }
+    var i = 1;
+    for (var powerName in data.powers) {
+        powerIndex = "power" + i;
+        currentFeat = document.getElementById(powerIndex)
+        currentFeat.innerHTML = powerName;
+        currentFeat.setAttribute('href', 'javascript:setSelected("' + powerName + '", "' + data.powers[powerName] + '")');
+        i += 1;
+    }
 }
 
 var setSelected = function(name, desc) {

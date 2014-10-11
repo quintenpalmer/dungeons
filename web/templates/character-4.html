@@ -140,6 +140,17 @@
                         </div>
                     {% endfor %}
                 </div>
+
+                <div class="row">
+                    <h1>Powers</h1>
+                    {% for name in ("power1", "power2", "power3", "power4", "power5") %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><a id="{{ name }}"></a></p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
 
             <div class="col-md-4">

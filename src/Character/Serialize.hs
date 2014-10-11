@@ -34,6 +34,9 @@ import Character.Player (
     getMagicItems,
     getMagicItemName,
     getMagicItemDescription,
+    getPowers,
+    getPowerName,
+    getPowerDescription,
     getBloodied,
     getSurgeValue,
     getSurgesPerDay)
@@ -71,6 +74,7 @@ data NetworkPlayer = NetworkPlayer { name :: String
                                    , defenses :: (Map String Int)
                                    , feats :: (Map String String)
                                    , magicItems :: (Map String String)
+                                   , powers :: (Map String String)
                                    , armor :: String
                                    , weapons :: String
                                    }
@@ -97,6 +101,7 @@ instance ToJSON NetworkPlayer where
         "defenses" .= defenses np,
         "feats" .= feats np,
         "magicItems" .= magicItems np,
+        "powers" .= powers np,
         "armor" .= armor np,
         "weapons" .= weapons np]
 
@@ -123,11 +128,15 @@ buildNetworkPlayer player =
         (getDefenses player)
         (getFeatMap player)
         (getMagicItemMap player)
+        (getPowerMap player)
         (getArmorName player)
         (getWeaponName player)
 
 getFeatMap :: Player -> (Map String String)
 getFeatMap player = fromList $ map (\x -> (getFeatName x, getFeatDescription x)) (getFeats player)
+
+getPowerMap :: Player -> (Map String String)
+getPowerMap player = fromList $ map (\x -> (getPowerName x, getPowerDescription x)) (getPowers player)
 
 getMagicItemMap :: Player -> (Map String String)
 getMagicItemMap player = fromList $ map (\x -> (getMagicItemName x, getMagicItemDescription x)) (getMagicItems player)
