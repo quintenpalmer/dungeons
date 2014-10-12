@@ -2,27 +2,27 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-sm-2">
                 <input id="name" class="form-control" type="text">
                 <div>Name</div>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-sm-2">
                 <input id="race" class="form-control" type="text">
                 <div>Race</div>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-sm-2">
                 <input id="class_" class="form-control" type="text">
                 <div>Class</div>
             </div>
 
-            <div class="col-md-1">
+            <div class="col-sm-1">
                 <input id="level" class="form-control" type="text">
                 <div>Level</div>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-sm-2">
                 <input id="xp" class="form-control" type="text">
                 <div>XP</div>
             </div>
@@ -30,12 +30,12 @@
         </div>
 
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-sm-2">
                 <input id="armor" class="form-control" type="text">
                 <div>Armor</div>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-sm-2">
                 <input id="weapons" class="form-control" type="text">
                 <div>Weapons</div>
             </div>
@@ -44,26 +44,26 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-sm-4">
                 <div class="row">
                     <h1>Initiative</h1>
-                    <div class="col-md-3">
+                    <div class="col-sm-3">
                         <input id="initiative" class="form-control" type="text">
                     </div>
-                    <div class="col-md-3">Initiative</div>
+                    <div class="col-sm-3">Initiative</div>
                 </div>
                 <div class="row">
                     <h1>Ability Scores</h1>
                     {% for (name) in ("Str", "Con", "Dex", "Int", "Wis", "Cha") %}
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-sm-3">
                                 <input id="abilScore{{ name }}" class="form-control" type="text">
                             </div>
-                            <div class="col-md-3">{{ name }}</div>
-                            <div class="col-md-3">
+                            <div class="col-sm-3">{{ name }}</div>
+                            <div class="col-sm-3">
                                 <input id="abilMod{{ name }}" class="form-control" type="text">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-sm-3">
                                 <input id="abilModPlus{{ name }}" class="form-control" type="text">
                             </div>
                         </div>
@@ -73,28 +73,28 @@
                 <div class="row">
                     <h1>Hit Points</h1>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <input id="health" class="form-control" type="text">
                         </div>
-                        <div class="col-md-3">Health</div>
+                        <div class="col-sm-3">Health</div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <input id="bloodied" class="form-control" type="text">
                         </div>
-                        <div class="col-md-3">Bloodied</div>
+                        <div class="col-sm-3">Bloodied</div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <input id="surgeValue" class="form-control" type="text">
                         </div>
-                        <div class="col-md-3">Surge Value</div>
+                        <div class="col-sm-3">Surge Value</div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <input id="surgesPerDay" class="form-control" type="text">
                         </div>
-                        <div class="col-md-3">Surges/Day</div>
+                        <div class="col-sm-3">Surges/Day</div>
                     </div>
                 </div>
 
@@ -106,25 +106,25 @@
                             "Nature", "Perception", "Religion", "Stealth", "Streetwise", "Thievery")
                         %}
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-sm-3">
                                     <input id="{{ name }}" class="form-control" type="text">
                                 </div>
-                                <div class="col-md-3">{{ name }}</div>
+                                <div class="col-sm-3">{{ name }}</div>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-sm-4">
                 <div class="row">
                     <h1>Defenses</h1>
                     {% for name in ("Ac", "Fort", "Ref", "Will") %}
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-sm-3">
                                 <input id="{{ name }}" class="form-control" type="text">
                             </div>
-                            <div class="col-md-3">{{ name }}</div>
+                            <div class="col-sm-3">{{ name }}</div>
                         </div>
                     {% endfor %}
 
@@ -132,76 +132,53 @@
 
                 <div class="row">
                     <h1>Magic Items</h1>
-                    {% for name in ("magicItem1", "magicItem2", "magicItem3", "magicItem4", "magicItem5") %}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><a id="{{ name }}"></a></p>
-                            </div>
-                        </div>
-                    {% endfor %}
+                    <div id="magicItems"></div>
                 </div>
 
                 <div class="row">
                     <h1>Powers</h1>
-                    {% for name in ("power1", "power2", "power3", "power4", "power5") %}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><a id="{{ name }}"></a></p>
-                            </div>
-                        </div>
-                    {% endfor %}
+                    <div id="powers"></div>
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-sm-4">
                 <div class="row">
                     <h1>Speed</h1>
-                    <div class="col-md-3">
+                    <div class="col-sm-3">
                         <input id="speed" class="form-control" type="text">
                     </div>
-                    <div class="col-md-3">Speed</div>
+                    <div class="col-sm-3">Speed</div>
                 </div>
 
                 <div class="row">
                     <h1>Senses</h1>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <input id="passiveInsight" class="form-control" type="text">
                         </div>
-                        <div class="col-md-3">Passive Insight</div>
+                        <div class="col-sm-3">Passive Insight</div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <input id="passivePerception" class="form-control" type="text">
                         </div>
-                        <div class="col-md-3">Passive Perception</div>
+                        <div class="col-sm-3">Passive Perception</div>
                     </div>
                 </div>
 
                 <div class="row">
                     <h1>Feats</h1>
-                    {% for name in ("feat1", "feat2", "feat3", "feat4", "feat5") %}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><a id="{{ name }}"></a></p>
-                            </div>
-                        </div>
-                    {% endfor %}
+                    <div id="feats"></div>
                 </div>
 
                 <div class="row">
                     <h1>Selected</h1>
                     <h2 id="selectedTitle"></h1>
-                    <div class="col-md-8">
-                        <p id="selected"></p>
+                    <div class="col-sm-10">
+                        <div id="selected"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-<script type="text/javascript">
-    getCharacter();
-</script>
-
 {% endblock %}

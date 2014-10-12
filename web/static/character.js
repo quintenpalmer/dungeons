@@ -1,65 +1,81 @@
-var getCharacter = function(name) {
-    jQuery.post(
+function getCharacter(name) {
+    $.post(
         '/rest/4.0/1.0/player',
         { 'name': name },
         function(data) { populateFields(data) },
         "json");
 }
 
-var populateFields = function(data) {
-    document.getElementById('name').value = data.name;
-    document.getElementById('race').value = data.race;
-    document.getElementById('armor').value = data.armor;
-    document.getElementById('weapons').value = data.weapons;
-    document.getElementById('class_').value = data.class_;
-    document.getElementById('level').value = data.level;
-    document.getElementById('xp').value = data.xp;
-    document.getElementById('initiative').value = data.initiative;
+function populateFields(data) {
+    character = data;
+    $('#name').val(data.name);
+    $('#race').val(data.race);
+    $('#armor').val(data.armor);
+    $('#weapons').val(data.weapons);
+    $('#class_').val(data.class_);
+    $('#level').val(data.level);
+    $('#xp').val(data.xp);
+    $('#initiative').val(data.initiative);
     for (var abilName in data.abilityScores) {
-        document.getElementById('abilScore' + abilName).value = data.abilityScores[abilName];
-        document.getElementById('abilMod' + abilName).value = data.abilityMods[abilName];
-        document.getElementById('abilModPlus' + abilName).value = data.abilityModsPlus[abilName];
+        $('#abilScore' + abilName).val(data.abilityScores[abilName]);
+        $('#abilMod' + abilName).val(data.abilityMods[abilName]);
+        $('#abilModPlus' + abilName).val(data.abilityModsPlus[abilName]);
     }
-    document.getElementById('health').value = data.hitPoints;
-    document.getElementById('bloodied').value = data.bloodied;
-    document.getElementById('surgeValue').value = data.surgeValue;
-    document.getElementById('surgesPerDay').value = data.surgesPerDay;
+    $('#health').val(data.hitPoints);
+    $('#bloodied').val(data.bloodied);
+    $('#surgeValue').val(data.surgeValue);
+    $('#surgesPerDay').val(data.surgesPerDay);
     for (var skillName in data.skills) {
-        document.getElementById(skillName).value = data.skills[skillName];
+        $('#' + skillName).val(data.skills[skillName]);
     }
     for (var defName in data.defenses) {
-        document.getElementById(defName).value = data.defenses[defName];
+        $('#' + defName).val(data.defenses[defName]);
     }
-    document.getElementById('speed').value = data.speed;
-    document.getElementById('passiveInsight').value = data.passiveInsight;
-    document.getElementById('passivePerception').value = data.passivePerception;
-    var i = 1;
-    for (var featName in data.feats) {
-        featIndex = "feat" + i;
-        currentFeat = document.getElementById(featIndex)
-        currentFeat.innerHTML = featName;
-        currentFeat.setAttribute('href', 'javascript:setSelected("' + featName + '", "' + data.feats[featName] + '")');
-        i += 1;
+    $('#speed').val(data.speed);
+    $('#passiveInsight').val(data.passiveInsight);
+    $('#passivePerception').val(data.passivePerception);
+
+    var buildSelectables = function(name, container, member) {
+        var i = 1;
+        for (var memName in data[member]) {
+            memIndex = memName;
+            var rowDiv = $('<div/>', {
+                class: "row"
+            });
+
+            var colDiv = $('<div/>', {
+                class: 'col-sm-6'
+            });
+
+            var par = $('<p/>');
+
+            var a = $('<a/>', {
+                id: memIndex,
+                href: '#',
+                class: 'selectable',
+                text: memName
+            });
+
+            container.append(rowDiv.append(colDiv.append(par.append(a))));
+        }
     }
-    var i = 1;
-    for (var magicItemName in data.magicItems) {
-        magicItemIndex = "magicItem" + i;
-        currentFeat = document.getElementById(magicItemIndex)
-        currentFeat.innerHTML = magicItemName;
-        currentFeat.setAttribute('href', 'javascript:setSelected("' + magicItemName + '", "' + data.magicItems[magicItemName] + '")');
-        i += 1;
-    }
-    var i = 1;
-    for (var powerName in data.powers) {
-        powerIndex = "power" + i;
-        currentFeat = document.getElementById(powerIndex)
-        currentFeat.innerHTML = powerName;
-        currentFeat.setAttribute('href', 'javascript:setSelected("' + powerName + '", "' + data.powers[powerName] + '")');
-        i += 1;
-    }
+    buildSelectables('feat', $('#feats'), 'feats');
+    buildSelectables('magicItem', $('#magicItems'), 'magicItems');
+    buildSelectables('power', $('#powers'), 'powers');
 }
 
-var setSelected = function(name, desc) {
-    document.getElementById('selectedTitle').innerHTML = name;
-    document.getElementById('selected').innerHTML = desc;
-}
+$(document).ready(function() {
+    getCharacter();
+    $(document).on('click', '.selectable', function(e) {
+        e.preventDefault();
+        name = this.id;
+        $('#selectedTitle').text(name);
+        desc = character[$(this).parent().parent().parent().parent().attr('id')][name].split(' - ');
+        var table = $('<ul/>');
+        for (var row in desc) {
+            table.append($('<li/>', { text: desc[row] }));
+        }
+        $('#selected').empty();
+        $('#selected').append(table);
+    });
+});
