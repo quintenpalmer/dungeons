@@ -1,7 +1,7 @@
 {
     "name": "Prompt",
     "level": 4,
-    "xp": 4450,
+    "xp": 4775,
     "class_": "druid",
     "race": "halfling",
     "armor": "leather",
@@ -32,6 +32,13 @@
         "emeraldStaff"
     ],
     "powers": [
-        "wildShape"
+        "wildShape",
+        "pounce",
+        "flameSeed",
+        "graspingClaws",
+        "cullTheHerd",
+        "predatorsFlurry",
+        "faerieFire",
+        "fleetPursuit"
     ]
 }
