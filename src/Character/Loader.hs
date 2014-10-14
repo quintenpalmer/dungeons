@@ -41,27 +41,10 @@ import Character.Types (Player,
 import Instances.Classes (druid)
 import Instances.Races (halfling)
 
-loadRawPlayer :: String -> Maybe Player
-loadRawPlayer jsonString = do
-    (FlatPlayer n mfs mmis mps l x mc mr ma mw mts mbas) <- decode (pack jsonString)
-    fs <- parseFeats mfs
-    mis <- parseMagicItems mmis
-    ps <- parsePowers mps
-    c <- parseClass mc
-    r <- parseRace mr
-    a <- parseArmor ma
-    w <- parseWeapon mw
-    ts <- parseSkills mts
-    bas <- parseBaseAbilityScores mbas
-    return $ newPlayer n fs l x r c a w mis ps ts bas
-
 loadPlayer :: String -> IO (Maybe Player)
 loadPlayer filename = do
     jsonString <- readFile $ getPlayerFile filename
     return $ loadRawPlayer jsonString
-
-getPlayerFile :: String -> String
-getPlayerFile filename = "data/" ++ filename ++ ".json"
 
 updatePlayer :: String -> String -> IO ()
 updatePlayer params playerName = do
@@ -71,6 +54,69 @@ updatePlayer params playerName = do
     case updatePlayerParser jsonString (parseParams params) of
         Just newJson -> writeFile file newJson
         Nothing -> putStrLn "broken"
+
+data FlatPlayer = FlatPlayer { name :: String
+                             , feats :: [String]
+                             , powers :: [String]
+                             , level :: Int
+                             , xp :: Int
+                             , class_ :: String
+                             , race :: String
+                             , armor :: String
+                             , weapon :: String
+                             , magicItems :: [String]
+                             , trainedSkills :: [String]
+                             , baseAbilityScores :: (Map String Int) } deriving Show
+
+
+instance FromJSON FlatPlayer where
+    parseJSON (Object v) = FlatPlayer <$>
+                           v .: "name" <*>
+                           v .: "feats" <*>
+                           v .: "powers" <*>
+                           v .: "level" <*>
+                           v .: "xp" <*>
+                           v .: "class_" <*>
+                           v .: "race" <*>
+                           v .: "armor" <*>
+                           v .: "weapon" <*>
+                           v .: "magicItems" <*>
+                           v .: "trainedSkills" <*>
+                           v .: "baseAbilityScores"
+    parseJSON _ = mzero
+
+
+instance ToJSON FlatPlayer where
+   toJSON fp = object [ "name" .= name fp,
+                        "feats" .= feats fp,
+                        "powers" .= powers fp,
+                        "level" .= level fp,
+                        "xp" .= xp fp,
+                        "class_" .= class_ fp,
+                        "race" .= race fp,
+                        "armor" .= armor fp,
+                        "weapon" .= weapon fp,
+                        "magicItems" .= magicItems fp,
+                        "trainedSkills" .= trainedSkills fp,
+                        "baseAbilityScores" .= baseAbilityScores fp ]
+
+
+loadRawPlayer :: String -> Maybe Player
+loadRawPlayer jsonString = do
+    (FlatPlayer n mfs mps l x mc mr ma mw mmis mts mbas) <- decode (pack jsonString)
+    fs <- parseFeats mfs
+    ps <- parsePowers mps
+    c <- parseClass mc
+    r <- parseRace mr
+    a <- parseArmor ma
+    w <- parseWeapon mw
+    mis <- parseMagicItems mmis
+    ts <- parseSkills mts
+    bas <- parseBaseAbilityScores mbas
+    return $ newPlayer n fs l x r c a w mis ps ts bas
+
+getPlayerFile :: String -> String
+getPlayerFile filename = "data/" ++ filename ++ ".json"
 
 parseParams :: String -> Map String String
 parseParams rawString =
@@ -88,52 +134,6 @@ updatePlayerParser playerJson params = do
             intVal <- readMaybe val
             return $ unpack $ encode $ (FlatPlayer n mfs mmis mps l intVal mc mr ma mw mts mbas)
         _ -> return $ unpack $ encode $ (FlatPlayer n mfs mmis mps l x mc mr ma mw mts mbas)
-
-data FlatPlayer = FlatPlayer { name :: String
-                             , feats :: [String]
-                             , magicItems :: [String]
-                             , powers :: [String]
-                             , level :: Int
-                             , xp :: Int
-                             , class_ :: String
-                             , race :: String
-                             , armor :: String
-                             , weapon :: String
-                             , trainedSkills :: [String]
-                             , baseAbilityScores :: (Map String Int) } deriving Show
-
-
-instance FromJSON FlatPlayer where
-    parseJSON (Object v) = FlatPlayer <$>
-                           v .: "name" <*>
-                           v .: "feats" <*>
-                           v .: "magicItems" <*>
-                           v .: "powers" <*>
-                           v .: "level" <*>
-                           v .: "xp" <*>
-                           v .: "class_" <*>
-                           v .: "race" <*>
-                           v .: "armor" <*>
-                           v .: "weapon" <*>
-                           v .: "trainedSkills" <*>
-                           v .: "baseAbilityScores"
-    parseJSON _ = mzero
-
-
-instance ToJSON FlatPlayer where
-   toJSON fp = object [ "name" .= name fp,
-                        "feats" .= feats fp,
-                        "magicItems" .= magicItems fp,
-                        "powers" .= powers fp,
-                        "level" .= level fp,
-                        "xp" .= xp fp,
-                        "class_" .= class_ fp,
-                        "race" .= race fp,
-                        "armor" .= armor fp,
-                        "weapon" .= weapon fp,
-                        "trainedSkills" .= trainedSkills fp,
-                        "baseAbilityScores" .= baseAbilityScores fp ]
-
 
 parseArmor :: String -> Maybe Armor
 parseArmor "leather" = Just $ Armor Leather 2
