@@ -1,19 +1,25 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Character.Loader (
-    loadPlayer
+    loadPlayer,
+    updatePlayer
 ) where
 
-import Data.Map (Map, toList)
+import Data.Map (Map, toList, empty, lookup)
+import Prelude hiding (lookup)
 import Control.Applicative ((<$>),
                             (<*>))
 import Control.Monad (mzero)
-import Data.ByteString.Lazy.Char8 (pack)
+import Data.ByteString.Lazy.Char8 (unpack, pack)
 
 import Data.Aeson (decode,
+                   encode,
                    Value(..),
+                   object,
+                   ToJSON(..),
                    FromJSON(..),
-                   (.:))
+                   (.:),
+                   (.=))
 
 import Character.Util (readMaybe)
 import Character.Types (Player,
@@ -35,8 +41,8 @@ import Character.Types (Player,
 import Instances.Classes (druid)
 import Instances.Races (halfling)
 
-loadPlayer :: String -> Maybe Player
-loadPlayer jsonString = do
+loadRawPlayer :: String -> Maybe Player
+loadRawPlayer jsonString = do
     (FlatPlayer n mfs mmis mps l x mc mr ma mw mts mbas) <- decode (pack jsonString)
     fs <- parseFeats mfs
     mis <- parseMagicItems mmis
@@ -48,6 +54,40 @@ loadPlayer jsonString = do
     ts <- parseSkills mts
     bas <- parseBaseAbilityScores mbas
     return $ newPlayer n fs l x r c a w mis ps ts bas
+
+loadPlayer :: String -> IO (Maybe Player)
+loadPlayer filename = do
+    jsonString <- readFile $ getPlayerFile filename
+    return $ loadRawPlayer jsonString
+
+getPlayerFile :: String -> String
+getPlayerFile filename = "data/" ++ filename ++ ".json"
+
+updatePlayer :: String -> String -> IO ()
+updatePlayer params playerName = do
+    let file = getPlayerFile playerName
+    jsonString <- readFile file
+    putStrLn params
+    case updatePlayerParser jsonString (parseParams params) of
+        Just newJson -> writeFile file newJson
+        Nothing -> putStrLn "broken"
+
+parseParams :: String -> Map String String
+parseParams rawString =
+    case ((decode (pack rawString)) :: (Maybe (Map String String))) of
+        Just ret -> ret
+        Nothing -> empty
+
+updatePlayerParser :: String -> (Map String String) -> Maybe String
+updatePlayerParser playerJson params = do
+    (FlatPlayer n mfs mmis mps l x mc mr ma mw mts mbas) <- decode (pack playerJson)
+    key <- lookup "key" params
+    val <- lookup "value" params
+    case key of
+        "xp" -> do
+            intVal <- readMaybe val
+            return $ unpack $ encode $ (FlatPlayer n mfs mmis mps l intVal mc mr ma mw mts mbas)
+        _ -> return $ unpack $ encode $ (FlatPlayer n mfs mmis mps l x mc mr ma mw mts mbas)
 
 data FlatPlayer = FlatPlayer { name :: String
                              , feats :: [String]
@@ -78,6 +118,21 @@ instance FromJSON FlatPlayer where
                            v .: "trainedSkills" <*>
                            v .: "baseAbilityScores"
     parseJSON _ = mzero
+
+
+instance ToJSON FlatPlayer where
+   toJSON fp = object [ "name" .= name fp,
+                        "feats" .= feats fp,
+                        "magicItems" .= magicItems fp,
+                        "powers" .= powers fp,
+                        "level" .= level fp,
+                        "xp" .= xp fp,
+                        "class_" .= class_ fp,
+                        "race" .= race fp,
+                        "armor" .= armor fp,
+                        "weapon" .= weapon fp,
+                        "trainedSkills" .= trainedSkills fp,
+                        "baseAbilityScores" .= baseAbilityScores fp ]
 
 
 parseArmor :: String -> Maybe Armor

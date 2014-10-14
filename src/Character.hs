@@ -4,8 +4,11 @@ module Character (
     getAttribute,
     serializePlayerForNetwork,
     serializePlayerForTerminal,
+    updatePlayer,
     loadPlayer,
-    readMaybe
+    readMaybe,
+    splitOnce,
+    splitTwice
 ) where
 
 import Character.Player (
@@ -17,6 +20,9 @@ import Character.Serialize (
     serializePlayerForNetwork,
     serializePlayerForTerminal)
 import Character.Loader (
-    loadPlayer)
+    loadPlayer,
+    updatePlayer)
 import Character.Util (
-    readMaybe)
+    readMaybe,
+    splitOnce,
+    splitTwice)
