@@ -18,6 +18,7 @@ module Character.Player (
     getFeats,
     getFeatName,
     getFeatDescription,
+    getItems,
     getMagicItems,
     getMagicItemName,
     getMagicItemDescription,
@@ -28,6 +29,7 @@ module Character.Player (
     getWeaponName
 ) where
 
+import Data.Map (Map)
 import Character.Util (
     getHalfLevel,
     getAbilModFromScore,
@@ -38,6 +40,7 @@ import Character.Types (
     Race(..),
     Feat(..),
     MagicItem(..),
+    Item(..),
     Power(..),
     getRacialSkill,
     getRacialAbility,
@@ -154,6 +157,9 @@ getFeatDescription = getRawFeatDescription
 
 getMagicItems :: Player -> [MagicItem]
 getMagicItems player = getRawMagicItems player
+
+getItems :: Player -> (Map Item Int)
+getItems player = getRawItems player
 
 getMagicItemName :: MagicItem -> String
 getMagicItemName = getRawMagicItemName

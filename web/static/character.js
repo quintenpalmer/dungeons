@@ -35,34 +35,51 @@ function populateFields(data) {
     $('#passiveInsight').val(data.passiveInsight);
     $('#passivePerception').val(data.passivePerception);
 
-    var buildSelectables = function(name, container, member) {
-        var i = 1;
+    var buildList = function(name, container, member, selectable) {
         container.empty();
+        var table = $('<table/>', {
+            class: 'table table-striped'
+        });
         for (var memName in data[member]) {
             memIndex = memName;
-            var rowDiv = $('<div/>', {
-                class: "row"
-            });
 
-            var colDiv = $('<div/>', {
-                class: 'col-sm-6'
-            });
+            if(selectable) {
+                var td = $('<td/>', {
+                    id: memIndex,
+                });
 
-            var par = $('<p/>');
+                var a = $('<a/>', {
+                    id: memIndex,
+                    href: '#',
+                    class: 'selectable',
+                    text: memName
+                });
+                var tr = $('<tr/>');
+                td.append(a);
+                tr.append(td)
+                table.append(tr);
 
-            var a = $('<a/>', {
-                id: memIndex,
-                href: '#',
-                class: 'selectable',
-                text: memName
-            });
-
-            container.append(rowDiv.append(colDiv.append(par.append(a))));
+            } else {
+                var td1 = $('<td/>', {
+                    id: memIndex,
+                    text: memName
+                });
+                var td2 = $('<td/>', {
+                    id: memIndex + "Count",
+                    text: data[member][memName]
+                });
+                var tr = $('<tr/>');
+                tr.append(td1)
+                tr.append(td2)
+                table.append(tr);
+            }
         }
+        container.append(table);
     }
-    buildSelectables('feat', $('#feats'), 'feats');
-    buildSelectables('magicItem', $('#magicItems'), 'magicItems');
-    buildSelectables('power', $('#powers'), 'powers');
+    buildList('feat', $('#feats'), 'feats', true);
+    buildList('power', $('#powers'), 'powers', true);
+    buildList('magicItem', $('#magicItems'), 'magicItems', true);
+    buildList('item', $('#items'), 'items', false);
 }
 
 $(document).ready(function() {
@@ -91,10 +108,10 @@ $(document).ready(function() {
         e.preventDefault();
         name = this.id;
         $('#selectedTitle').text(name);
-        desc = character[$(this).parent().parent().parent().parent().attr('id')][name].split(' - ');
-        var table = $('<ul/>');
+        desc = character[$(this).parent().parent().parent().parent().parent().attr('id')][name].split(' - ');
+        var table = $('<table/>', { class: 'table table-striped' });
         for (var row in desc) {
-            table.append($('<li/>', { text: desc[row] }));
+            table.append($('<tr/>').append($('<td/>', { text: desc[row] })));
         }
         $('#selected').empty();
         $('#selected').append(table);

@@ -5,7 +5,7 @@ module Character.Serialize (
     serializePlayerForTerminal
 ) where
 
-import Data.Map (Map, fromList)
+import Data.Map (Map, fromList, toList)
 
 import Character.Types (
     Player(..),
@@ -31,6 +31,7 @@ import Character.Player (
     getFeats,
     getFeatName,
     getFeatDescription,
+    getItems,
     getMagicItems,
     getMagicItemName,
     getMagicItemDescription,
@@ -74,6 +75,7 @@ data NetworkPlayer = NetworkPlayer { name :: String
                                    , defenses :: (Map String Int)
                                    , feats :: (Map String String)
                                    , magicItems :: (Map String String)
+                                   , items :: (Map String Int)
                                    , powers :: (Map String String)
                                    , armor :: String
                                    , weapons :: String
@@ -100,6 +102,7 @@ instance ToJSON NetworkPlayer where
                         "defenses" .= defenses np,
                         "feats" .= feats np,
                         "magicItems" .= magicItems np,
+                        "items" .= items np,
                         "powers" .= powers np,
                         "armor" .= armor np,
                         "weapons" .= weapons np]
@@ -127,6 +130,7 @@ buildNetworkPlayer player =
         (getDefenses player)
         (getFeatMap player)
         (getMagicItemMap player)
+        (getItemsMap player)
         (getPowerMap player)
         (getArmorName player)
         (getWeaponName player)
@@ -139,6 +143,9 @@ getPowerMap player = fromList $ map (\x -> (getPowerName x, getPowerDescription 
 
 getMagicItemMap :: Player -> (Map String String)
 getMagicItemMap player = fromList $ map (\x -> (getMagicItemName x, getMagicItemDescription x)) (getMagicItems player)
+
+getItemsMap :: Player -> (Map String Int)
+getItemsMap player = fromList $ map (\(x, count) -> (show x, count)) (toList (getItems player))
 
 getAbilityScores :: Player -> (Map String Int)
 getAbilityScores player = fromList $ map (\x -> (show x, getAbilScore x player)) (allValues :: [Ability])

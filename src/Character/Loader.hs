@@ -5,7 +5,7 @@ module Character.Loader (
     updatePlayer
 ) where
 
-import Data.Map (Map, toList, empty, lookup)
+import Data.Map (Map, fromList, toList, empty, lookup)
 import Prelude hiding (lookup)
 import Control.Applicative ((<$>),
                             (<*>))
@@ -26,6 +26,7 @@ import Character.Types (Player,
                         Race,
                         Feat(..),
                         MagicItem(..),
+                        Item(..),
                         Power(..),
                         Class,
                         Skill,
@@ -65,6 +66,7 @@ data FlatPlayer = FlatPlayer { name :: String
                              , armor :: String
                              , weapon :: String
                              , magicItems :: [String]
+                             , items :: (Map String Int)
                              , trainedSkills :: [String]
                              , baseAbilityScores :: (Map String Int) } deriving Show
 
@@ -81,6 +83,7 @@ instance FromJSON FlatPlayer where
                            v .: "armor" <*>
                            v .: "weapon" <*>
                            v .: "magicItems" <*>
+                           v .: "items" <*>
                            v .: "trainedSkills" <*>
                            v .: "baseAbilityScores"
     parseJSON _ = mzero
@@ -97,13 +100,14 @@ instance ToJSON FlatPlayer where
                         "armor" .= armor fp,
                         "weapon" .= weapon fp,
                         "magicItems" .= magicItems fp,
+                        "items" .= items fp,
                         "trainedSkills" .= trainedSkills fp,
                         "baseAbilityScores" .= baseAbilityScores fp ]
 
 
 loadRawPlayer :: String -> Maybe Player
 loadRawPlayer jsonString = do
-    (FlatPlayer n mfs mps l x mc mr ma mw mmis mts mbas) <- decode (pack jsonString)
+    (FlatPlayer n mfs mps l x mc mr ma mw mmis mitems mts mbas) <- decode (pack jsonString)
     fs <- parseFeats mfs
     ps <- parsePowers mps
     c <- parseClass mc
@@ -111,9 +115,10 @@ loadRawPlayer jsonString = do
     a <- parseArmor ma
     w <- parseWeapon mw
     mis <- parseMagicItems mmis
+    is <- parseItems mitems
     ts <- parseSkills mts
     bas <- parseBaseAbilityScores mbas
-    return $ newPlayer n fs l x r c a w mis ps ts bas
+    return $ newPlayer n fs l x r c a w mis is ps ts bas
 
 getPlayerFile :: String -> String
 getPlayerFile filename = "data/" ++ filename ++ ".json"
@@ -126,14 +131,14 @@ parseParams rawString =
 
 updatePlayerParser :: String -> (Map String String) -> Maybe String
 updatePlayerParser playerJson params = do
-    (FlatPlayer n mfs mmis mps l x mc mr ma mw mts mbas) <- decode (pack playerJson)
+    (FlatPlayer n mfs mps l x mc mr ma mw mmis mis mts mbas) <- decode (pack playerJson)
     key <- lookup "key" params
     val <- lookup "value" params
     case key of
         "xp" -> do
             intVal <- readMaybe val
-            return $ unpack $ encode $ (FlatPlayer n mfs mmis mps l intVal mc mr ma mw mts mbas)
-        _ -> return $ unpack $ encode $ (FlatPlayer n mfs mmis mps l x mc mr ma mw mts mbas)
+            return $ unpack $ encode $ (FlatPlayer n mfs mps l intVal mc mr ma mw mmis mis mts mbas)
+        _ -> return $ unpack $ encode $ (FlatPlayer n mfs mps l x mc mr ma mw mmis mis mts mbas)
 
 parseArmor :: String -> Maybe Armor
 parseArmor "leather" = Just $ Armor Leather 2
@@ -203,12 +208,26 @@ parsePower "faerieFire" = Just $ Power "Faerie Fire" "Daily - Implement, Primal,
 parsePower "fleetPursuit" = Just $ Power "Fleet Pursuit" "Daily - Beast Form, Primal - Minor Action - Effect: Until the end of the encounter, you gain a power bonus to your speed while you are in beast form equal to your Dexterity modifier."
 parsePower _ = Nothing
 
-parseBaseAbilityScores :: (Map String Int) -> Maybe [(Ability, Int)]
-parseBaseAbilityScores baseScores = parseHelper $ toList baseScores
+parseBaseAbilityScores :: (Map String Int) -> Maybe (Map Ability Int)
+parseBaseAbilityScores baseScores = do
+    tuples <- parseABScoreHelper $ toList baseScores
+    return $ fromList tuples
 
-parseHelper :: [(String, Int)] -> Maybe [(Ability, Int)]
-parseHelper [] = Just []
-parseHelper ((abilName, val):xs) = do
+parseABScoreHelper :: [(String, Int)] -> Maybe [(Ability, Int)]
+parseABScoreHelper [] = Just []
+parseABScoreHelper ((abilName, val):xs) = do
     ability <- readMaybe abilName
-    abilities <- parseHelper xs
+    abilities <- parseABScoreHelper xs
     return ((ability, val):abilities)
+
+parseItems :: (Map String Int) -> Maybe (Map Item Int)
+parseItems itemMap = do
+    tuples <- parseItemsHelper $ toList itemMap
+    return $ fromList tuples
+
+parseItemsHelper :: [(String, Int)] -> Maybe [(Item, Int)]
+parseItemsHelper [] = Just []
+parseItemsHelper ((itemName, count):xs) = do
+    theItem <- Just $ Item itemName
+    remainingItems <- parseItemsHelper xs
+    return ((theItem, count):remainingItems)
