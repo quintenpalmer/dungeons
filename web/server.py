@@ -23,6 +23,16 @@ def get_character_info():
     return jsonify(data)
 
 
+@app.route('/rest/4.0/1.0/update', methods=['POST'])
+def update_character():
+    print request.form
+    data = send_request(
+        'update:prompt:' +
+        json.dumps({
+            'key': request.form['key'],
+            'value': request.form['value']}))
+    print data
+    return jsonify(json.loads(data))
 
 
 def send_request(name):

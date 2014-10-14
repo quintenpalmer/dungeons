@@ -67,6 +67,26 @@ function populateFields(data) {
 
 $(document).ready(function() {
     getCharacter();
+    $('#updateXp').submit(function(formEvent) {
+        formEvent.preventDefault();
+        var value = $('#newXp').val();
+        if(value == "") {
+            return false;
+        }
+        value = parseInt(value);
+        value += parseInt($('#xp').val());
+        console.log('hi there');
+        console.log(formEvent);
+        $.post(
+            '/rest/4.0/1.0/update',
+            {'key': 'xp', 'value': value },
+            function (data) {
+                console.log(data);
+                getCharacter(data);
+            },
+            'json');
+    });
+
     $(document).on('click', '.selectable', function(e) {
         e.preventDefault();
         name = this.id;
