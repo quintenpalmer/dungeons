@@ -21,6 +21,7 @@ Requirements
     - aeson 0.6.* to 0.7.*
     - aeson-pretty 0.7.*
     - network 2.4.* to 2.5.*
+ - a web browser (tested with Chrome version 37.0.2062.120 on linux and Chrome version 38.0.2125.102 on android)
 
 Instalation
 -----------
