@@ -19,22 +19,19 @@ def get_character_sheet():
 
 @app.route('/rest/4.0/1.0/player', methods=['GET', 'POST'])
 def get_character_info():
-    data = get_character_info_from_server('prompt')
-    print data
+    data = json.loads(send_request('player:prompt'))
     return jsonify(data)
 
 
-def get_character_info_from_server(name):
+
+
+def send_request(name):
     HOST = 'localhost'
     PORT = 5269
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT))
-    return json.loads(send_request('player', s))
-
-
-def send_request(name, s):
-    s.sendall(name + '\n')
-    data = s.recv(8196)
+    serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serverSocket.connect((HOST, PORT))
+    serverSocket.sendall(name + '\n')
+    data = serverSocket.recv(8196)
     return data
 
 

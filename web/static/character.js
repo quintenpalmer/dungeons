@@ -3,7 +3,7 @@ function getCharacter(name) {
         '/rest/4.0/1.0/player',
         { 'name': name },
         function(data) { populateFields(data) },
-        "json");
+        'json');
 }
 
 function populateFields(data) {
@@ -37,6 +37,7 @@ function populateFields(data) {
 
     var buildSelectables = function(name, container, member) {
         var i = 1;
+        container.empty();
         for (var memName in data[member]) {
             memIndex = memName;
             var rowDiv = $('<div/>', {
@@ -78,4 +79,5 @@ $(document).ready(function() {
         $('#selected').empty();
         $('#selected').append(table);
     });
+
 });

@@ -80,30 +80,29 @@ data NetworkPlayer = NetworkPlayer { name :: String
                                    }
 
 instance ToJSON NetworkPlayer where
-   toJSON np = object [
-        "name" .= name np,
-        "race" .= race np,
-        "class_" .= class_ np,
-        "level" .= level np,
-        "xp" .= xp np,
-        "initiative" .= initiative np,
-        "hitPoints" .= hitPoints np,
-        "bloodied" .= bloodied np,
-        "surgeValue" .= surgeValue np,
-        "surgesPerDay" .= surgesPerDay np,
-        "speed" .= speed np,
-        "passiveInsight" .= passiveInsight np,
-        "passivePerception" .= passivePerception np,
-        "abilityScores" .= abilityScores np,
-        "abilityMods" .= abilityMods np,
-        "abilityModsPlus" .= abilityModsPlus np,
-        "skills" .= skills np,
-        "defenses" .= defenses np,
-        "feats" .= feats np,
-        "magicItems" .= magicItems np,
-        "powers" .= powers np,
-        "armor" .= armor np,
-        "weapons" .= weapons np]
+   toJSON np = object [ "name" .= name np,
+                        "race" .= race np,
+                        "class_" .= class_ np,
+                        "level" .= level np,
+                        "xp" .= xp np,
+                        "initiative" .= initiative np,
+                        "hitPoints" .= hitPoints np,
+                        "bloodied" .= bloodied np,
+                        "surgeValue" .= surgeValue np,
+                        "surgesPerDay" .= surgesPerDay np,
+                        "speed" .= speed np,
+                        "passiveInsight" .= passiveInsight np,
+                        "passivePerception" .= passivePerception np,
+                        "abilityScores" .= abilityScores np,
+                        "abilityMods" .= abilityMods np,
+                        "abilityModsPlus" .= abilityModsPlus np,
+                        "skills" .= skills np,
+                        "defenses" .= defenses np,
+                        "feats" .= feats np,
+                        "magicItems" .= magicItems np,
+                        "powers" .= powers np,
+                        "armor" .= armor np,
+                        "weapons" .= weapons np]
 
 buildNetworkPlayer :: Player -> NetworkPlayer
 buildNetworkPlayer player =
