@@ -1,6 +1,7 @@
 module Character.Player (
     getRaceName,
     getClassName,
+    getClassSpecName,
     getAttribute,
     getInitiative,
     getAbilScore,
@@ -90,9 +91,13 @@ getRaceName player = raceName $ getRace player
 getClassName :: Player -> String
 getClassName player = className $ getClass player
 
+getClassSpecName :: Player -> String
+getClassSpecName player = show $ getRawClassSpec $ getClass player
+
 getSpeed :: Player -> Int
 getSpeed player =
-    getRacialSpeed $ getRace player
+    (getRacialSpeed $ getRace player) +
+    (sum (map (\x -> x player) (getSpeedMisc player)))
 
 getSkill :: Skill -> Player -> Int
 getSkill skill player =

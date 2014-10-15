@@ -39,7 +39,7 @@ import Character.Types (Player,
                         TwoHanderType(..),
                         TwoHander(..),
                         OneHander(..))
-import Instances.Classes (druid)
+import Instances.Classes (druid, primalPredator)
 import Instances.Races (halfling)
 
 loadPlayer :: String -> IO (Maybe Player)
@@ -62,6 +62,7 @@ data FlatPlayer = FlatPlayer { name :: String
                              , level :: Int
                              , xp :: Int
                              , class_ :: String
+                             , classSpec :: String
                              , race :: String
                              , armor :: String
                              , weapon :: String
@@ -79,6 +80,7 @@ instance FromJSON FlatPlayer where
                            v .: "level" <*>
                            v .: "xp" <*>
                            v .: "class_" <*>
+                           v .: "classSpec" <*>
                            v .: "race" <*>
                            v .: "armor" <*>
                            v .: "weapon" <*>
@@ -96,6 +98,7 @@ instance ToJSON FlatPlayer where
                         "level" .= level fp,
                         "xp" .= xp fp,
                         "class_" .= class_ fp,
+                        "classSpec" .= classSpec fp,
                         "race" .= race fp,
                         "armor" .= armor fp,
                         "weapon" .= weapon fp,
@@ -107,10 +110,10 @@ instance ToJSON FlatPlayer where
 
 loadRawPlayer :: String -> Maybe Player
 loadRawPlayer jsonString = do
-    (FlatPlayer n mfs mps l x mc mr ma mw mmis mitems mts mbas) <- decode (pack jsonString)
+    (FlatPlayer n mfs mps l x mc mcs mr ma mw mmis mitems mts mbas) <- decode (pack jsonString)
     fs <- parseFeats mfs
     ps <- parsePowers mps
-    c <- parseClass mc
+    c <- parseClass mc mcs
     r <- parseRace mr
     a <- parseArmor ma
     w <- parseWeapon mw
@@ -131,17 +134,17 @@ parseParams rawString =
 
 updatePlayerParser :: String -> (Map String String) -> Maybe String
 updatePlayerParser playerJson params = do
-    (FlatPlayer n mfs mps l x mc mr ma mw mmis mis mts mbas) <- decode (pack playerJson)
+    (FlatPlayer n mfs mps l x mc mcs mr ma mw mmis mis mts mbas) <- decode (pack playerJson)
     key <- lookup "key" params
     val <- lookup "value" params
     case key of
         "xp" -> do
             intVal <- readMaybe val
-            return $ unpack $ encode $ (FlatPlayer n mfs mps l intVal mc mr ma mw mmis mis mts mbas)
-        _ -> return $ unpack $ encode $ (FlatPlayer n mfs mps l x mc mr ma mw mmis mis mts mbas)
+            return $ unpack $ encode $ (FlatPlayer n mfs mps l intVal mc mcs mr ma mw mmis mis mts mbas)
+        _ -> return $ unpack $ encode $ (FlatPlayer n mfs mps l x mc mcs mr ma mw mmis mis mts mbas)
 
 parseArmor :: String -> Maybe Armor
-parseArmor "leather" = Just $ Armor Leather 2
+parseArmor "light" = Just $ Armor Light 1
 parseArmor _ = Nothing
 
 parseWeapon :: String -> Maybe Weapons
@@ -152,9 +155,9 @@ parseRace :: String -> Maybe Race
 parseRace "halfling" = Just halfling
 parseRace  _ = Nothing
 
-parseClass :: String -> Maybe Class
-parseClass "druid" = Just druid
-parseClass _ = Nothing
+parseClass :: String -> String -> Maybe Class
+parseClass "druid" "primalPredator" = Just $ druid primalPredator
+parseClass _ _ = Nothing
 
 parseSkills :: [String] -> Maybe [Skill]
 parseSkills [] = Just []

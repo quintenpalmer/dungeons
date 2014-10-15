@@ -4,6 +4,7 @@ module Character.Types (
     getRawAbilityScore,
     getTrainedSkillAmount,
     getHealth,
+    wearingHeavyArmor,
 
     Skill(..),
     getSkillAbil,
@@ -29,6 +30,7 @@ module Character.Types (
     getAcFromArmor,
 
     Class(..),
+    ClassSpec(..),
     getClassDefense,
     newClass,
 
@@ -44,12 +46,15 @@ import Data.Map (
     (!),
     findWithDefault)
 
+type MiscAdder = Player -> Player
+
 data Player = Player { getName :: String
                      , getRawFeats :: [Feat]
                      , getLevel :: Int
                      , getXp :: Int
                      , getRace :: Race
                      , getClass :: Class
+                     , getSpeedMisc :: [(Player -> Int)]
                      , getArmor :: Armor
                      , getWeapons :: Weapons
                      , getRawMagicItems :: [MagicItem]
@@ -63,7 +68,23 @@ newPlayer :: String -> [Feat] -> Int -> Int ->
              [MagicItem] -> (Map Item Int) -> [Power] -> [Skill] -> (Map Ability Int) ->
              Player
 newPlayer name feats level xp race class_ armor weapon magicItems items power trainedSkills baseStats =
-    Player name feats level xp race class_ armor weapon magicItems items power trainedSkills $ BaseStats $ baseStats
+    let player = Player name feats level xp race class_ [] armor weapon magicItems items power trainedSkills $ BaseStats $ baseStats
+        classMods = getClassSpecMod $ getRawClassSpec class_ in
+    classMods player
+
+getHealth :: Player -> Int
+getHealth player =
+    (getStartingHealthValue (getClass player)) +
+    ((getHealthPerLevel (getClass player)) * (getLevel player))
+
+getTrainedSkillAmount :: Skill -> Player -> Int
+getTrainedSkillAmount skill player =
+    if skill `elem` (getRawTrainedSkills player)
+    then 5
+    else 0
+
+wearingHeavyArmor :: Player -> Bool
+wearingHeavyArmor player = isHeavyArmor $ getArmor player
 
 data Skill = Acrobatics |
              Arcana |
@@ -116,17 +137,6 @@ data Defense = Ac |
                Ref |
                Will deriving (Ord, Eq, Show, Read, Enum, Bounded)
 
-getHealth :: Player -> Int
-getHealth player =
-    (getStartingHealthValue (getClass player)) +
-    ((getHealthPerLevel (getClass player)) * (getLevel player))
-
-getTrainedSkillAmount :: Skill -> Player -> Int
-getTrainedSkillAmount skill player =
-    if skill `elem` (getRawTrainedSkills player)
-    then 5
-    else 0
-
 -- Race
 
 data Race = Race { raceName :: String
@@ -161,19 +171,26 @@ getRacialAbility abil race = let (AbilityMap abilMap) = getRawRacialAbilities ra
 data Class = Class { className :: String
                    , getRawClassDefenses :: DefenseMap
                    , getStartingHealthValue :: Int
-                   , getHealthPerLevel :: Int }
+                   , getHealthPerLevel :: Int
+                   , getRawClassSpec :: ClassSpec }
 
 data DefenseMap = DefenseMap (Map Defense Int)
 
-newClass :: String -> [(Defense, Int)] -> Int -> Int -> Class
-newClass name defenses startingHealth healthPerLevel =
-    Class name (DefenseMap $ fromList defenses) startingHealth healthPerLevel
+data ClassSpec = ClassSpec { getClassSpecName :: String
+                           , getClassSpecMod :: MiscAdder }
+
+instance Show ClassSpec where
+    show = getClassSpecName
+
+newClass :: String -> [(Defense, Int)] -> Int -> Int -> ClassSpec -> Class
+newClass name defenses startingHealth healthPerLevel classSpec =
+    Class name (DefenseMap $ fromList defenses) startingHealth healthPerLevel classSpec
 
 getClassDefense :: Defense -> Class -> Int
 getClassDefense def class_ = let (DefenseMap defMap) = getRawClassDefenses class_ in
     findWithDefault 0 def defMap
 
--- Armor/Weapon
+-- Armor
 
 data Armor = Armor ArmorType Int
 
@@ -181,7 +198,6 @@ instance Show Armor where
     show (Armor a _) = show a
 
 data ArmorType = Heavy
-               | Leather
                | Light deriving (Show)
 
 getRawArmorName :: Armor -> String
@@ -189,6 +205,12 @@ getRawArmorName = show
 
 getAcFromArmor :: Armor -> Int
 getAcFromArmor (Armor _ val) = val
+
+isHeavyArmor :: Armor -> Bool
+isHeavyArmor (Armor Heavy _) = True
+isHeavyArmor (Armor Light _) = False
+
+-- Weapon
 
 data Weapons = TwoHandedWeapon TwoHander
             | OneHandedWeapons OneHander OneHander
