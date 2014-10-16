@@ -25,16 +25,20 @@ Requirements
 
 Instalation
 -----------
+After cloning with
+
+    git clone git@github.com:quintenpalmer/dungeons
+
 From one terminal, run
 
-    cd ~/path/to/dungeons
+    cd dungeons/server
     cabal install
     cabal configure
     cabal run server
 
 Fron another terminal, run
 
-    cd ~/path/to/dungeons/web
+    cd dungeons/web
     python server.py
 
 
