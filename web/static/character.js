@@ -104,6 +104,34 @@ $(document).ready(function() {
             'json');
     });
 
+    $('#updateGold').submit(function(formEvent) {
+        formEvent.preventDefault();
+        var value = $('#newGold').val();
+        console.log(value);
+        if(value == "") {
+            console.log("no value in #newGold");
+            return false;
+        }
+        value = parseInt(value);
+        var updateAmount = $('#GoldCount').text();
+        console.log(updateAmount);
+        if(updateAmount == "") {
+            console.log("no value in #GoldCount");
+            return false;
+        }
+        value += parseInt(updateAmount);
+        console.log('hi there');
+        console.log(formEvent);
+        $.post(
+            '/rest/4.0/1.0/update',
+            {'key': 'Gold', 'value': value },
+            function (data) {
+                console.log(data);
+                getCharacter(data);
+            },
+            'json');
+    });
+
     $(document).on('click', '.selectable', function(e) {
         e.preventDefault();
         name = this.id;

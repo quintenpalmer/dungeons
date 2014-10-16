@@ -5,7 +5,7 @@ module Character.Loader (
     updatePlayer
 ) where
 
-import Data.Map (Map, fromList, toList, empty, lookup)
+import Data.Map (Map, fromList, toList, empty, lookup, update)
 import Prelude hiding (lookup)
 import Control.Applicative ((<$>),
                             (<*>))
@@ -141,7 +141,12 @@ updatePlayerParser playerJson params = do
         "xp" -> do
             intVal <- readMaybe val
             return $ unpack $ encode $ flatPlayer { xp = intVal }
-        _ -> return $ unpack $ encode flatPlayer
+        _ -> case lookup key (items flatPlayer) of
+                Just _ -> do
+                    intVal <- readMaybe val
+                    let updatedItems = update (\_-> Just intVal) key (items flatPlayer)
+                    return $ unpack $ encode $ flatPlayer { items = updatedItems }
+                Nothing -> return $ unpack $ encode flatPlayer
 
 parseArmor :: String -> Maybe Armor
 parseArmor "light" = Just $ Armor Light 1
