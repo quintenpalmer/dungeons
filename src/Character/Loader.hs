@@ -110,18 +110,18 @@ instance ToJSON FlatPlayer where
 
 loadRawPlayer :: String -> Maybe Player
 loadRawPlayer jsonString = do
-    (FlatPlayer n mfs mps l x mc mcs mr ma mw mmis mitems mts mbas) <- decode (pack jsonString)
-    fs <- parseFeats mfs
-    ps <- parsePowers mps
-    c <- parseClass mc mcs
-    r <- parseRace mr
-    a <- parseArmor ma
-    w <- parseWeapon mw
-    mis <- parseMagicItems mmis
-    is <- parseItems mitems
-    ts <- parseSkills mts
-    bas <- parseBaseAbilityScores mbas
-    return $ newPlayer n fs l x r c a w mis is ps ts bas
+    flatPlayer <- decode (pack jsonString)
+    fs <- parseFeats $ feats flatPlayer
+    ps <- parsePowers $ powers flatPlayer
+    c <- parseClass (class_ flatPlayer) $ classSpec flatPlayer
+    r <- parseRace $ race flatPlayer
+    a <- parseArmor $ armor flatPlayer
+    w <- parseWeapon $ weapon flatPlayer
+    mis <- parseMagicItems $ magicItems flatPlayer
+    is <- parseItems $ items flatPlayer
+    ts <- parseSkills $ trainedSkills flatPlayer
+    bas <- parseBaseAbilityScores $ baseAbilityScores flatPlayer
+    return $ newPlayer (name flatPlayer) fs (level flatPlayer) (xp flatPlayer) r c a w mis is ps ts bas
 
 getPlayerFile :: String -> String
 getPlayerFile filename = "data/" ++ filename ++ ".json"
@@ -134,14 +134,14 @@ parseParams rawString =
 
 updatePlayerParser :: String -> (Map String String) -> Maybe String
 updatePlayerParser playerJson params = do
-    (FlatPlayer n mfs mps l x mc mcs mr ma mw mmis mis mts mbas) <- decode (pack playerJson)
+    flatPlayer <- decode (pack playerJson)
     key <- lookup "key" params
     val <- lookup "value" params
     case key of
         "xp" -> do
             intVal <- readMaybe val
-            return $ unpack $ encode $ (FlatPlayer n mfs mps l intVal mc mcs mr ma mw mmis mis mts mbas)
-        _ -> return $ unpack $ encode $ (FlatPlayer n mfs mps l x mc mcs mr ma mw mmis mis mts mbas)
+            return $ unpack $ encode $ flatPlayer { xp = intVal }
+        _ -> return $ unpack $ encode flatPlayer
 
 parseArmor :: String -> Maybe Armor
 parseArmor "light" = Just $ Armor Light 1
