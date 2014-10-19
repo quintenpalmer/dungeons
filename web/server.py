@@ -19,7 +19,7 @@ def get_character_sheet():
 
 @app.route('/rest/4.0/1.0/player', methods=['GET', 'POST'])
 def get_character_info():
-    rawData = send_request('player:prompt')
+    rawData = send_request('player:Prompt')
     print rawData
     data = json.loads(rawData)
     return jsonify(data)
@@ -28,7 +28,7 @@ def get_character_info():
 @app.route('/rest/4.0/1.0/update', methods=['POST'])
 def update_character():
     data = send_request(
-        'update:prompt:' +
+        'update:Prompt:' +
         json.dumps({
             'key': request.form['key'],
             'value': request.form['value']}))

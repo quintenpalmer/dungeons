@@ -5,7 +5,8 @@ module Character (
     serializePlayerForNetwork,
     serializePlayerForTerminal,
     updatePlayer,
-    loadPlayer,
+    selectPlayer,
+    parseParams,
     readMaybe,
     splitOnce,
     splitTwice
@@ -19,10 +20,11 @@ import Character.Types (
 import Character.Serialize (
     serializePlayerForNetwork,
     serializePlayerForTerminal)
-import Character.Loader (
-    loadPlayer,
+import Character.Database (
+    selectPlayer,
     updatePlayer)
 import Character.Util (
     readMaybe,
+    parseParams,
     splitOnce,
     splitTwice)

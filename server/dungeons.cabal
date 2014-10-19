@@ -6,7 +6,7 @@ version:             0.1.0.0
 synopsis:            Dungeons and Dragons 4.0 Character Sheet Automation
 -- description:         
 license:             MIT
-license-file:        LICENSE
+license-file:        ../LICENSE
 author:              Quinten Palmer
 maintainer:          quintenpalmer@gmail.com
 -- copyright:           
@@ -17,11 +17,11 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:     Character,
-                       Character.Loader,
                        Character.Serialize
   other-modules:       Character.Types,
                        Character.Player,
                        Character.Util,
+                       Character.Database,
                        Instances.Races,
                        Instances.Classes
 
@@ -30,8 +30,10 @@ library
   build-depends:       base >=4.6 && <4.7,
                        containers >=0.5 && <0.6,
                        bytestring >=0.10 && <0.11,
-                       aeson >=0.6 && <0.9,
-                       aeson-pretty >=0.7 && <0.8
+                       aeson >=0.6 && <0.8,
+                       aeson-pretty >=0.7 && <0.8,
+                       sqlite-simple >= 0.4 && < 0.5,
+                       text
 
   hs-source-dirs:      src
   ghc-options:         -Wall
@@ -47,6 +49,7 @@ executable server
 
   build-depends:       base,
                        network >=2.4 && <2.6,
+                       containers >=0.5 && <0.6,
                        dungeons
 
   default-language:    Haskell2010

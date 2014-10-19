@@ -14,12 +14,14 @@ Requirements
  - ghc (tested with version 7.6.3)
  - python 2 (tested with version 2.7.6)
  - flask (tested with version 0.10.1)
+ - sqlite3 (tested with version 3.8.3)
  - ghc libraries:
     - base 4.6.*
     - containers 0.5.*
     - bytestring 0.10.*
     - aeson 0.6.* to 0.7.*
     - aeson-pretty 0.7.*
+    - sqlite-simple 0.4.*
     - network 2.4.* to 2.5.*
  - a web browser (tested with Chrome version 37.0.2062.120 on linux and Chrome version 38.0.2125.102 on android)
 

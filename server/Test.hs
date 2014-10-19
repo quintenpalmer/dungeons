@@ -2,9 +2,9 @@ module Main where
 
 import Data.Maybe (fromJust)
 
-import Character (loadPlayer,
+import Character (selectPlayer,
                   serializePlayerForTerminal)
 
 main = do
-    mPlayer <- loadPlayer "prompt"
+    mPlayer <- selectPlayer "Prompt"
     putStrLn $ serializePlayerForTerminal $ fromJust mPlayer

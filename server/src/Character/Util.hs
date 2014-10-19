@@ -1,11 +1,16 @@
 module Character.Util (
     getHalfLevel,
     getAbilModFromScore,
+    parseParams,
     readMaybe,
     allValues,
     splitTwice,
     splitOnce
 ) where
+
+import Data.Map (Map, empty)
+import Data.ByteString.Lazy.Char8 (pack)
+import Data.Aeson (decode)
 
 getHalfLevel :: Int -> Int
 getHalfLevel level = (level `div` 2)
@@ -35,3 +40,9 @@ sOnce _ [] buf = (buf, "")
 sOnce delim (x:xs) buf = if delim == x
     then (buf, xs)
     else sOnce delim xs (buf ++ [x])
+
+parseParams :: String -> Map String String
+parseParams rawString =
+    case ((decode (pack rawString)) :: (Maybe (Map String String))) of
+        Just ret -> ret
+        Nothing -> empty
