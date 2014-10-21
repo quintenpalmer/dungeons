@@ -1,9 +1,91 @@
+$(document).ready(function() {
+    getCharacter();
+    registerUpdaters();
+    registerSelectables();
+});
+
+function registerUpdaters() {
+    $('#updateXp').submit(function(formEvent) {
+        formEvent.preventDefault();
+        var value = $('#newXp').val();
+        if(value == "") {
+            return false;
+        }
+        value = parseInt(value);
+        value += parseInt($('#xp').val());
+        $.post(
+            '/rest/4.0/1.0/update',
+            {'key': 'xp', 'value': value },
+            function (data) {
+                getCharacter(data);
+            },
+            'json');
+    });
+    registerGenericUpdater('Gold');
+    registerGenericUpdater('Item');
+}
+
+function registerGenericUpdater(name) {
+    $('#update' + name).submit(getFormEventHandler(name));
+}
+
+function registerSelectables() {
+    $(document).on('click', '.selectable', function(e) {
+        e.preventDefault();
+        name = this.id;
+        $('#selectedTitle').text(name);
+        desc = character[$(this).parent().parent().parent().parent().parent().attr('id')][name].split(' - ');
+        var table = $('<table/>', { class: 'table table-striped' });
+        for (var row in desc) {
+            table.append($('<tr/>').append($('<td/>', { text: desc[row] })));
+        }
+        $('#selected').empty();
+        $('#selected').append(table);
+    });
+    $(document).on('click', '.updateable', function(formEvent) {
+        formEvent.preventDefault();
+        var pieces = this.href.split('/');
+        var amount = pieces[pieces.length - 1];
+        return getFormEventHandler(this.id, amount)(formEvent);
+    });
+}
+
 function getCharacter(name) {
     $.post(
         '/rest/4.0/1.0/player',
         { 'name': name },
         function(data) { populateFields(data) },
         'json');
+}
+
+function getFormEventHandler(name, incValue) {
+    return function(formEvent) {
+        formEvent.preventDefault();
+        var value = 0;
+        if(!incValue) {
+            value = $('#new' + name).val();
+            if(!value) {
+                console.log("no value in #new" + name);
+                return false;
+            }
+        } else {
+            value = parseInt(incValue);
+        }
+        value = parseInt(value);
+        var updateAmount = $('#' + name + 'Count').text();
+        if(!updateAmount) {
+            console.log("no value in #" + name + "Count");
+            return false;
+        }
+        value += parseInt(updateAmount);
+        $.post(
+            '/rest/4.0/1.0/update',
+            {'key': name, 'value': value },
+            function (data) {
+                getCharacter(data);
+            },
+            'json');
+    };
 }
 
 function populateFields(data) {
@@ -35,114 +117,70 @@ function populateFields(data) {
     $('#passiveInsight').val(data.passiveInsight);
     $('#passivePerception').val(data.passivePerception);
 
-    var buildList = function(name, container, member, selectable) {
+    var buildList = function(name, selectable, updateable) {
+        var container = $('#' + name + 's');
+        var member = name + 's';
+
         container.empty();
         var table = $('<table/>', {
             class: 'table table-striped'
         });
-        for (var memName in data[member]) {
-            memIndex = memName;
-
+        for(var memName in data[member]) {
+            var tr = $('<tr/>');
             if(selectable) {
-                var td = $('<td/>', {
-                    id: memIndex,
-                });
-
+                var td = $('<td/>');
                 var a = $('<a/>', {
-                    id: memIndex,
+                    id: memName,
                     href: '#',
                     class: 'selectable',
                     text: memName
                 });
-                var tr = $('<tr/>');
                 td.append(a);
                 tr.append(td)
-                table.append(tr);
 
             } else {
                 var td1 = $('<td/>', {
-                    id: memIndex,
                     text: memName
                 });
                 var td2 = $('<td/>', {
-                    id: memIndex + "Count",
+                    id: memName + "Count",
                     text: data[member][memName]
                 });
-                var tr = $('<tr/>');
-                tr.append(td1)
-                tr.append(td2)
-                table.append(tr);
+                if(updateable) {
+                    var a3 = $('<a/>', {
+                        id: memName,
+                        href: '-1',
+                        class: 'updateable',
+                        text: "-1"
+                    });
+                    var td3 = $('<td/>');
+                    td3.append(a3);
+                    var a4 = $('<a/>', {
+                        id: memName,
+                        href: '1',
+                        class: 'updateable',
+                        text: "+1"
+                    });
+                    var td4 = $('<td/>', {
+                        id: memName,
+                    });
+                    td4.append(a4);
+
+                    tr.append(td1);
+                    tr.append(td3);
+                    tr.append(td2);
+                    tr.append(td4);
+                } else {
+                    tr.append(td1);
+                    tr.append(td2);
+                }
             }
+            table.append(tr);
         }
         container.append(table);
     }
-    buildList('feat', $('#feats'), 'feats', true);
-    buildList('power', $('#powers'), 'powers', true);
-    buildList('magicItem', $('#magicItems'), 'magicItems', true);
-    buildList('item', $('#items'), 'items', false);
+    buildList('feat', true, false);
+    buildList('power', true, false);
+    buildList('magicItem', true, false);
+    buildList('item', false, true);
 }
-
-$(document).ready(function() {
-    getCharacter();
-    $('#updateXp').submit(function(formEvent) {
-        formEvent.preventDefault();
-        var value = $('#newXp').val();
-        if(value == "") {
-            return false;
-        }
-        value = parseInt(value);
-        value += parseInt($('#xp').val());
-        console.log('hi there');
-        console.log(formEvent);
-        $.post(
-            '/rest/4.0/1.0/update',
-            {'key': 'xp', 'value': value },
-            function (data) {
-                console.log(data);
-                getCharacter(data);
-            },
-            'json');
-    });
-
-    $('#updateGold').submit(function(formEvent) {
-        formEvent.preventDefault();
-        var value = $('#newGold').val();
-        console.log(value);
-        if(value == "") {
-            console.log("no value in #newGold");
-            return false;
-        }
-        value = parseInt(value);
-        var updateAmount = $('#GoldCount').text();
-        console.log(updateAmount);
-        if(updateAmount == "") {
-            console.log("no value in #GoldCount");
-            return false;
-        }
-        value += parseInt(updateAmount);
-        console.log('hi there');
-        console.log(formEvent);
-        $.post(
-            '/rest/4.0/1.0/update',
-            {'key': 'Gold', 'value': value },
-            function (data) {
-                console.log(data);
-                getCharacter(data);
-            },
-            'json');
-    });
-
-    $(document).on('click', '.selectable', function(e) {
-        e.preventDefault();
-        name = this.id;
-        $('#selectedTitle').text(name);
-        desc = character[$(this).parent().parent().parent().parent().parent().attr('id')][name].split(' - ');
-        var table = $('<table/>', { class: 'table table-striped' });
-        for (var row in desc) {
-            table.append($('<tr/>').append($('<td/>', { text: desc[row] })));
-        }
-        $('#selected').empty();
-        $('#selected').append(table);
-    });
-
-});
