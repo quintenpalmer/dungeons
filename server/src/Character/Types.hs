@@ -48,29 +48,28 @@ import Data.Map (
 
 type MiscAdder = Player -> Player
 
-data Player = Player { getName :: String
+data Player = Player { getSpeedMisc :: [(Player -> Int)]
+                     , getRawBaseStats :: BaseStats
+                     , getName :: String
                      , getRawFeats :: [Feat]
                      , getLevel :: Int
                      , getXp :: Int
                      , getRace :: Race
                      , getClass :: Class
-                     , getSpeedMisc :: [(Player -> Int)]
                      , getArmor :: Armor
                      , getWeapons :: Weapons
                      , getRawMagicItems :: [MagicItem]
                      , getRawItems :: (Map Item Int)
                      , getRawPowers :: [Power]
-                     , getRawTrainedSkills :: [Skill]
-                     , getRawBaseStats :: BaseStats }
+                     , getRawTrainedSkills :: [Skill] }
 
 newPlayer :: String -> [Feat] -> Int -> Int ->
              Race -> Class -> Armor -> Weapons ->
              [MagicItem] -> (Map Item Int) -> [Power] -> [Skill] -> (Map Ability Int) ->
              Player
 newPlayer name feats level xp race class_ armor weapon magicItems items power trainedSkills baseStats =
-    let player = Player name feats level xp race class_ [] armor weapon magicItems items power trainedSkills $ BaseStats $ baseStats
-        classMods = getClassSpecMod $ getRawClassSpec class_ in
-    classMods player
+    let classMods = getClassSpecMod $ getRawClassSpec class_ in
+    classMods $ Player [] (BaseStats baseStats) name feats level xp race class_ armor weapon magicItems items power trainedSkills
 
 getHealth :: Player -> Int
 getHealth player =
@@ -144,9 +143,9 @@ data Race = Race { raceName :: String
                  , getRawRacialAbilities :: AbilityMap
                  , getRawRacialSpeed :: Int }
 
-data SkillMap = SkillMap (Map Skill Int)
+newtype SkillMap = SkillMap (Map Skill Int)
 
-data AbilityMap = AbilityMap (Map Ability Int)
+newtype AbilityMap = AbilityMap (Map Ability Int)
 
 newRace :: String -> [(Skill, Int)] -> [(Ability, Int)] -> Int -> Race
 newRace name skills abilities speed =
@@ -174,7 +173,7 @@ data Class = Class { className :: String
                    , getHealthPerLevel :: Int
                    , getRawClassSpec :: ClassSpec }
 
-data DefenseMap = DefenseMap (Map Defense Int)
+newtype DefenseMap = DefenseMap (Map Defense Int)
 
 data ClassSpec = ClassSpec { getClassSpecName :: String
                            , getClassSpecMod :: MiscAdder }
@@ -255,7 +254,7 @@ data MagicItem = MagicItem { getRawMagicItemName :: String
 
 -- Items
 
-data Item = Item { getRawItemName :: String } deriving (Ord, Eq)
+newtype Item = Item { getRawItemName :: String } deriving (Ord, Eq)
 
 instance Show Item where
     show = getRawItemName
@@ -267,7 +266,7 @@ data Power = Power { getRawPowerName :: String
 
 -- Base Stats
 
-data BaseStats = BaseStats (Map Ability Int)
+newtype BaseStats = BaseStats (Map Ability Int)
 
 getRawAbilityScore :: Ability -> BaseStats -> Int
 getRawAbilityScore abil (BaseStats baseStats) = baseStats ! abil

@@ -2,7 +2,6 @@ module Character.Player (
     getRaceName,
     getClassName,
     getClassSpecName,
-    getAttribute,
     getInitiative,
     getAbilScore,
     getAbilMod,
@@ -33,8 +32,7 @@ module Character.Player (
 import Data.Map (Map)
 import Character.Util (
     getHalfLevel,
-    getAbilModFromScore,
-    readMaybe)
+    getAbilModFromScore)
 import Character.Types (
     Player(..),
     Class(..),
@@ -55,35 +53,8 @@ import Character.Types (
     Ability(..),
     Skill(..),
     Defense(..),
-    Armor(..),
-    ArmorType(..),
-    Weapons(..),
     getAcFromArmor,
     getRawAbilityScore)
-
-getAttribute :: String -> String -> Player -> Maybe String
-getAttribute request param player = case request of
-    "name" -> Just $ getName player
-    "level" -> Just $ show $ getLevel player
-    "initiative" -> Just $ show $ getInitiative player
-    "speed" -> Just $ show $ getSpeed player
-    "health" -> Just $ show $ getHealth player
-    "abilityScore" -> case readMaybe param of
-        Just ability -> Just $ show $ getAbilScore ability player
-        Nothing -> Nothing
-    "abilityMod" -> case readMaybe param of
-        Just ability -> Just $ show $ getAbilMod ability player
-        Nothing -> Nothing
-    "abilityModPlus" -> case readMaybe param of
-        Just ability -> Just $ show $ getAbilModPlus ability player
-        Nothing -> Nothing
-    "skill" -> case readMaybe param of
-        Just skill -> Just $ show $ getSkill skill player
-        Nothing -> Nothing
-    "defense" -> case readMaybe param of
-        Just def -> Just $ show $ getDefense def player
-        Nothing -> Nothing
-    _ -> Nothing
 
 getRaceName :: Player -> String
 getRaceName player = raceName $ getRace player

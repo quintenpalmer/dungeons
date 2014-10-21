@@ -15,8 +15,7 @@ import System.IO (hPutStrLn,
                   hFlush,
                   hClose)
 
-import Character (getAttribute,
-                  Player,
+import Character (Player,
                   serializePlayerForNetwork,
                   updatePlayer,
                   selectPlayer,

@@ -1,7 +1,5 @@
 module Character (
     Player,
-    newPlayer,
-    getAttribute,
     serializePlayerForNetwork,
     serializePlayerForTerminal,
     updatePlayer,
@@ -12,11 +10,8 @@ module Character (
     splitTwice
 ) where
 
-import Character.Player (
-    getAttribute)
 import Character.Types (
-    Player(..),
-    newPlayer)
+    Player)
 import Character.Serialize (
     serializePlayerForNetwork,
     serializePlayerForTerminal)
