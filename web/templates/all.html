@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block head %}
+    <script type="text/javascript" src="{{ url_for('static', filename='all.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="col-sm-4">
+            <h1>Characters</h1>
+            <div id="characters"></div>
+        </div>
+    </div>
+{% endblock %}

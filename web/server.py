@@ -14,28 +14,39 @@ def home():
     return render_template("welcome.html")
 
 
+@app.route('/dnd/4.0/characters/', methods=['GET'])
+def get_all_characters():
+    return render_template("all.html")
+
+
 @app.route('/dnd/4.0/character/', methods=['GET'])
 def get_character_sheet():
-    return render_template("character-4.html")
+    name = request.args.get('name', '')
+    return render_template("character-4.html", permaName=name)
 
 
-@app.route('/rest/4.0/1.0/player', methods=['GET', 'POST'])
+@app.route('/rest/4.0/1.0/player', methods=['POST'])
 def get_character_info():
-    rawData = send_request('player:Prompt')
-    print rawData
-    data = json.loads(rawData)
-    return jsonify(data)
+    name = request.form['name']
+    rawData = send_request('player:' + name)
+    return jsonify(json.loads(rawData))
 
 
 @app.route('/rest/4.0/1.0/update', methods=['POST'])
 def update_character():
+    name = request.form['name']
     data = send_request(
-        'update:Prompt:' +
+        'update:' + name + ':' +
         json.dumps({
             'key': request.form['key'],
             'value': request.form['value']}))
-    print data
     return jsonify(json.loads(data))
+
+
+@app.route('/rest/4.0/1.0/all', methods=['POST'])
+def rest_get_all():
+    rawData = send_request('allPlayers')
+    return jsonify({'data': json.loads(rawData)})
 
 
 def send_request(name):

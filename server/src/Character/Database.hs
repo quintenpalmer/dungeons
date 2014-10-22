@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Character.Database (
+    getPlayers,
     selectPlayer,
     updatePlayer
 ) where
@@ -22,6 +23,12 @@ import Character.Util (readMaybe)
 import Character.Types
 import Instances.Classes
 import Instances.Races
+
+getPlayers :: IO [String]
+getPlayers = do
+    conn <- open "dungeons.db"
+    players <- query conn "SELECT * from character" () :: IO [DBPlayer]
+    return $ map (\x -> name x) players
 
 selectPlayer :: String -> IO (Maybe Player)
 selectPlayer inputName = do

@@ -17,8 +17,9 @@ import System.IO (hPutStrLn,
 
 import Character (Player,
                   serializePlayerForNetwork,
-                  updatePlayer,
+                  getPlayers,
                   selectPlayer,
+                  updatePlayer,
                   parseParams,
                   splitTwice)
 
@@ -40,18 +41,25 @@ respond :: Handle -> IO ()
 respond h = do
     rawRequest <- hGetLine h
     let (request, playerName, rawParams) = parseRequest rawRequest
-    let params = parseParams rawParams
-    mPlayer <- selectPlayer playerName
-    case mPlayer of
-        Just player -> do
-            doRequest request params playerName player
-            hPutStrLn h $ getResponse request params player
-            hFlush h
-            respond h
-        Nothing -> do
-            hPutStrLn h $ reportFailure playerName
-            hFlush h
-            respond h
+    case request of
+        "allPlayers" -> do
+            players <- getPlayers
+            sendResponse h $ show players
+        _ -> do
+            let params = parseParams rawParams
+            mPlayer <- selectPlayer playerName
+            case mPlayer of
+                Just player -> do
+                    doRequest request params playerName player
+                    sendResponse h $ getResponse request params player
+                Nothing -> do
+                    sendResponse h $ reportFailure playerName
+
+sendResponse :: Handle -> String -> IO ()
+sendResponse h message = do
+    hPutStrLn h message
+    hFlush h
+    respond h
 
 doRequest :: String -> Map String String -> String -> Player -> IO ()
 doRequest "update" params playerName _ = updatePlayer params playerName

@@ -1,8 +1,13 @@
 $(document).ready(function() {
+    getCharacterName();
     getCharacter();
     registerUpdaters();
     registerSelectables();
 });
+
+function getCharacterName() {
+    characterName = $('#permaName').text();
+}
 
 function registerUpdaters() {
     $('#updateXp').submit(function(formEvent) {
@@ -15,9 +20,9 @@ function registerUpdaters() {
         value += parseInt($('#xp').val());
         $.post(
             '/rest/4.0/1.0/update',
-            {'key': 'xp', 'value': value },
+            {'key': 'xp', 'value': value , 'name': characterName },
             function (data) {
-                getCharacter(data);
+                getCharacter();
             },
             'json');
     });
@@ -68,7 +73,7 @@ function registerGenericUpdater(name) {
 function registerSelectables() {
     $(document).on('click', '.selectable', function(e) {
         e.preventDefault();
-        name = this.id;
+        var name = this.id;
         $('#selectedTitle').text(name);
         desc = character[$(this).parent().parent().parent().parent().parent().attr('id')][name].split(' - ');
         var table = $('<table/>', { class: 'table table-striped' });
@@ -96,20 +101,20 @@ function registerSelectables() {
     });
 }
 
-function getCharacter(name) {
+function getCharacter() {
     $.post(
         '/rest/4.0/1.0/player',
-        { 'name': name },
+        { 'name': characterName },
         function(data) { populateFields(data) },
         'json');
 }
 
-function postUpdate(name, value) {
+function postUpdate(key, value) {
     $.post(
         '/rest/4.0/1.0/update',
-        {'key': name, 'value': value },
+        {'key': key, 'value': value, 'name': characterName },
         function (data) {
-            getCharacter(data);
+            getCharacter();
         },
         'json');
 }

@@ -2,6 +2,7 @@ module Character (
     Player,
     serializePlayerForNetwork,
     serializePlayerForTerminal,
+    getPlayers,
     updatePlayer,
     selectPlayer,
     parseParams,
@@ -16,6 +17,7 @@ import Character.Serialize (
     serializePlayerForNetwork,
     serializePlayerForTerminal)
 import Character.Database (
+    getPlayers,
     selectPlayer,
     updatePlayer)
 import Character.Util (
