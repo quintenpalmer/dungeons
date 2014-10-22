@@ -22,11 +22,47 @@ function registerUpdaters() {
             'json');
     });
     registerGenericUpdater('Gold');
-    registerGenericUpdater('Item');
+    registerItemUpdater();
+}
+
+function registerItemUpdater() {
+    $('#updateItem').submit(getBasicFormEventHandler());
+}
+
+function getBasicFormEventHandler() {
+    return function(formEvent) {
+        formEvent.preventDefault();
+        var name = $('#newItem').val();
+        if(!name) {
+            console.log("no value in #newItem");
+            return false;
+        }
+        var value = '1';
+        postUpdate(name, value);
+    };
+}
+
+function getIncreasingFormEventHandler(name) {
+    return function(formEvent) {
+        formEvent.preventDefault();
+        value = $('#new' + name).val();
+        if(!value) {
+            console.log("no value in #new" + name);
+            return false;
+        }
+        value = parseInt(value);
+        var updateAmount = $('#' + name + 'Count').text();
+        if(!updateAmount) {
+            console.log("no value in #" + name + "Count");
+            return false;
+        }
+        value += parseInt(updateAmount);
+        postUpdate(name, value);
+    };
 }
 
 function registerGenericUpdater(name) {
-    $('#update' + name).submit(getFormEventHandler(name));
+    $('#update' + name).submit(getIncreasingFormEventHandler(name));
 }
 
 function registerSelectables() {
@@ -44,9 +80,19 @@ function registerSelectables() {
     });
     $(document).on('click', '.updateable', function(formEvent) {
         formEvent.preventDefault();
+        var name = this.id;
         var pieces = this.href.split('/');
         var amount = pieces[pieces.length - 1];
-        return getFormEventHandler(this.id, amount)(formEvent);
+
+        value = parseInt(amount);
+        var updateAmount = $('#' + name + 'Count').text();
+        if(!updateAmount) {
+            console.log("no value in #" + name + "Count");
+            return false;
+        }
+        value += parseInt(updateAmount);
+
+        postUpdate(this.id, value);
     });
 }
 
@@ -58,34 +104,14 @@ function getCharacter(name) {
         'json');
 }
 
-function getFormEventHandler(name, incValue) {
-    return function(formEvent) {
-        formEvent.preventDefault();
-        var value = 0;
-        if(!incValue) {
-            value = $('#new' + name).val();
-            if(!value) {
-                console.log("no value in #new" + name);
-                return false;
-            }
-        } else {
-            value = parseInt(incValue);
-        }
-        value = parseInt(value);
-        var updateAmount = $('#' + name + 'Count').text();
-        if(!updateAmount) {
-            console.log("no value in #" + name + "Count");
-            return false;
-        }
-        value += parseInt(updateAmount);
-        $.post(
-            '/rest/4.0/1.0/update',
-            {'key': name, 'value': value },
-            function (data) {
-                getCharacter(data);
-            },
-            'json');
-    };
+function postUpdate(name, value) {
+    $.post(
+        '/rest/4.0/1.0/update',
+        {'key': name, 'value': value },
+        function (data) {
+            getCharacter(data);
+        },
+        'json');
 }
 
 function populateFields(data) {

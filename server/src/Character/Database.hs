@@ -15,7 +15,7 @@ import Database.SQLite.Simple (FromRow(..),
                                query,
                                execute,
                                close)
-import Data.Map (Map, empty, fromList, lookup)
+import Data.Map (Map, fromList, lookup)
 import Prelude hiding (lookup)
 import Data.Text (pack)
 import Character.Util (readMaybe)
@@ -64,29 +64,37 @@ buildPlayer dbp dbfeats dbmis dbpowers dbskills dbitems = do
 updatePlayer :: Map String String -> String -> IO ()
 updatePlayer params playerName = do
     conn <- open "dungeons.db"
-    case updatePlayerParser params of
-        Just q -> do
+    case getKeyVal params of
+        Just (key, val) -> do
             dbPlayers <- ((query conn "SELECT * FROM character WHERE name = ?" (Only playerName)) :: IO [DBPlayer])
             case dbPlayers of
-                [dbPlayer] -> execute conn q (Only $ pid dbPlayer)
+                [dbPlayer] -> updatePlayerParser key val conn $ pid dbPlayer
                 _ -> return ()
         Nothing -> return ()
 
-updatePlayerParser :: (Map String String) -> Maybe Query
-updatePlayerParser params = do
+getKeyVal :: (Map String String) -> Maybe (String, Int)
+getKeyVal params = do
     key <- lookup "key" params
     val <- lookup "value" params
+    intVal <- readMaybe val :: Maybe Int
+    return (key, intVal)
+
+updatePlayerParser :: String -> Int -> Connection -> Int -> IO ()
+updatePlayerParser key val conn p = do
     case key of
         "xp" -> do
-            intVal <- readMaybe val :: Maybe Int
-            return $ Query $ pack $ "UPDATE character SET xp = " ++ val ++ " WHERE charId = ?"
+            execute conn (Query $ pack $ "UPDATE character SET xp = " ++ show val ++ " WHERE charId = ?") (Only p)
         _ -> do
-            intVal <- readMaybe val :: Maybe Int
-            return $ Query $ pack $ "UPDATE itemsToCharacters SET count = " ++ val ++ " WHERE name = '" ++ key ++ "' AND charId = ?"
+            itemCount <- ((query conn "SELECT * FROM itemsToCharacters WHERE name = ? AND charId = ?" (key, p)) :: IO [Counted])
+            case itemCount of
+                [] -> execute conn (Query $ pack $ "INSERT INTO itemsToCharacters VALUES (?, ?, ?)") (key, val, p)
+                _ -> case val of
+                        0 -> execute conn (Query $ pack $ "DELETE FROM itemsToCharacters WHERE name = ? AND charId = ?") (key, p)
+                        _ -> execute conn (Query $ pack $ "UPDATE itemsToCharacters SET count = " ++ show val ++ " WHERE name = '" ++ key ++ "' AND charId = ?") (Only p)
 
 -- DB Data Structures
 
-data DBPlayer = DBPlayer { pid ::Int
+data DBPlayer = DBPlayer { pid :: Int
                          , name :: String
                          , level :: Int
                          , xp :: Int
