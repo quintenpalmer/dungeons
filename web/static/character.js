@@ -47,18 +47,30 @@ function getBasicFormEventHandler() {
     };
 }
 
+function onlyAlpha(string) {
+    return string.replace(/\W/g, '');
+}
+
+function nameCount(name) {
+    return onlyAlpha(name + 'Count');
+}
+
+function newName(name) {
+    return onlyAlpha('new' + name);
+}
+
 function getIncreasingFormEventHandler(name) {
     return function(formEvent) {
         formEvent.preventDefault();
-        value = $('#new' + name).val();
+        value = $('#' + newName(name)).val();
         if(!value) {
-            console.log("no value in #new" + name);
+            console.log("no value in #" + name);
             return false;
         }
         value = parseInt(value);
-        var updateAmount = $('#' + name + 'Count').text();
+        var updateAmount = $('#' + nameCount(name)).text();
         if(!updateAmount) {
-            console.log("no value in #" + name + "Count");
+            console.log("no value in #" + nameCount(name));
             return false;
         }
         value += parseInt(updateAmount);
@@ -90,9 +102,9 @@ function registerSelectables() {
         var amount = pieces[pieces.length - 1];
 
         value = parseInt(amount);
-        var updateAmount = $('#' + name + 'Count').text();
+        var updateAmount = $('#' + nameCount(name)).text();
         if(!updateAmount) {
-            console.log("no value in #" + name + "Count");
+            console.log("no value in #" + nameCount(name));
             return false;
         }
         value += parseInt(updateAmount);
@@ -174,7 +186,7 @@ function populateFields(data) {
                     text: memName
                 });
                 var td2 = $('<td/>', {
-                    id: memName + "Count",
+                    id: nameCount(memName),
                     text: data[member][memName]
                 });
                 if(updateable) {
