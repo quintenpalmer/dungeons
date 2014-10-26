@@ -71,7 +71,7 @@ getResponse "player" params = do
         Just player -> return $ serializePlayerForNetwork player
         Nothing -> return $ reportFailure "could not find player"
 getResponse "update" params = return $ reportSuccess "update"
-getResponse "all" params = do
+getResponse "allPlayers" params = do
     players <- getPlayers
     return $ show players
 getResponse request _ = return $ reportFailure request
