@@ -1,7 +1,8 @@
 module Main where
 
 import Control.Concurrent (forkIO)
-import Data.Map (Map)
+import Data.Map (Map, lookup)
+import Prelude hiding (lookup)
 import Network (accept,
                 Socket,
                 listenOn,
@@ -21,7 +22,7 @@ import Character (Player,
                   selectPlayer,
                   updatePlayer,
                   parseParams,
-                  splitTwice)
+                  splitOnce)
 
 main :: IO ()
 main = withSocketsDo $ do
@@ -40,20 +41,11 @@ loop sock = do
 respond :: Handle -> IO ()
 respond h = do
     rawRequest <- hGetLine h
-    let (request, playerName, rawParams) = parseRequest rawRequest
-    case request of
-        "allPlayers" -> do
-            players <- getPlayers
-            sendResponse h $ show players
-        _ -> do
-            let params = parseParams rawParams
-            mPlayer <- selectPlayer playerName
-            case mPlayer of
-                Just player -> do
-                    doRequest request params playerName player
-                    sendResponse h $ getResponse request params player
-                Nothing -> do
-                    sendResponse h $ reportFailure playerName
+    let (request, rawParams) = parseRequest rawRequest
+    let params = parseParams rawParams
+    doRequest request params
+    response <- getResponse request params
+    sendResponse h $ response
 
 sendResponse :: Handle -> String -> IO ()
 sendResponse h message = do
@@ -61,20 +53,40 @@ sendResponse h message = do
     hFlush h
     respond h
 
-doRequest :: String -> Map String String -> String -> Player -> IO ()
-doRequest "update" params playerName _ = updatePlayer params playerName
-doRequest _ _ _ _ = return ()
+doRequest :: String -> Map String String -> IO ()
+doRequest "update" params = do
+    mPlayerName <- getPlayerName params
+    case mPlayerName of
+        Just playerName -> updatePlayer params playerName
+        Nothing -> return ()
+doRequest _ _ = return ()
 
-parseRequest :: String -> (String, String, String)
-parseRequest msg = splitTwice ':' msg
+parseRequest :: String -> (String, String)
+parseRequest msg = splitOnce ':' msg
 
-getResponse :: String -> Map String String -> Player -> String
-getResponse request params player = sendServerRequest request params player
+getResponse :: String -> Map String String -> IO String
+getResponse "player" params = do
+    mPlayer <- getPlayer params
+    case mPlayer of
+        Just player -> return $ serializePlayerForNetwork player
+        Nothing -> return $ reportFailure "could not find player"
+getResponse "update" params = return $ reportSuccess "update"
+getResponse "all" params = do
+    players <- getPlayers
+    return $ show players
+getResponse request _ = return $ reportFailure request
 
-sendServerRequest :: String -> Map String String -> Player -> String
-sendServerRequest "player" params player = serializePlayerForNetwork player
-sendServerRequest "update" params player = reportSuccess "update"
-sendServerRequest request _ _ = reportFailure request
+getPlayer :: Map String String -> IO (Maybe Player)
+getPlayer params = do
+    mPlayerName <- getPlayerName params
+    case mPlayerName of
+        Just playerName -> do
+            selectPlayer playerName
+        Nothing -> return Nothing
+
+getPlayerName :: Map String String -> IO (Maybe String)
+getPlayerName params = do
+    return $ lookup "name" params
 
 
 reportSuccess :: String -> String

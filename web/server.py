@@ -28,7 +28,9 @@ def get_character_sheet():
 @app.route('/rest/4.0/1.0/player', methods=['POST'])
 def get_character_info():
     name = request.form['name']
-    rawData = send_request('player:' + name)
+    rawData = send_request('player:' +
+        json.dumps({
+            'name': name}))
     return jsonify(json.loads(rawData))
 
 
@@ -36,8 +38,9 @@ def get_character_info():
 def update_character():
     name = request.form['name']
     data = send_request(
-        'update:' + name + ':' +
+        'update:' +
         json.dumps({
+            'name': name,
             'key': request.form['key'],
             'value': request.form['value']}))
     return jsonify(json.loads(data))
